@@ -85,6 +85,11 @@
             color: var(--text-muted);
             cursor: pointer;
             transition: 0.3s;
+            touch-action: manipulation;
+        }
+
+        .status-badge * {
+            pointer-events: none;
         }
 
         .status-badge.vip-active {
@@ -532,7 +537,7 @@
             display: flex;
             justify-content: space-around;
             padding: 10px 0 14px;
-            z-index: 100;
+            z-index: 500;
         }
 
         .nav-btn {
@@ -547,6 +552,13 @@
             font-weight: 600;
             cursor: pointer;
             width: 33.3%;
+            position: relative;
+            z-index: 501;
+            touch-action: manipulation;
+        }
+
+        .nav-btn * {
+            pointer-events: none;
         }
 
         .nav-btn svg {
@@ -794,16 +806,16 @@
         </section>
     </div>
 
-    <nav>
-        <button type="button" class="nav-btn active" id="nav-home" onclick="switchTab('home')">
+    <nav id="bottomNav">
+        <button type="button" class="nav-btn active" id="nav-home" data-tab="home" onclick="switchTab('home')">
             <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
             <span>الرئيسية</span>
         </button>
-        <button type="button" class="nav-btn" id="nav-history" onclick="switchTab('history')">
+        <button type="button" class="nav-btn" id="nav-history" data-tab="history" onclick="switchTab('history')">
             <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
             <span>التحميلات</span>
         </button>
-        <button type="button" class="nav-btn" id="nav-vip" onclick="switchTab('vip')">
+        <button type="button" class="nav-btn" id="nav-vip" data-tab="vip" onclick="switchTab('vip')">
             <svg viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
             <span>استرداد VIP</span>
         </button>
@@ -812,17 +824,52 @@
     <script>
         function switchTab(tabName) {
             try {
-                document.querySelectorAll('.tab-section').forEach(function(el) {
-                    el.classList.remove('active');
-                });
-                document.querySelectorAll('.nav-btn').forEach(function(el) {
-                    el.classList.remove('active');
-                });
+                var sections = document.querySelectorAll('.tab-section');
+                for (var i = 0; i < sections.length; i++) {
+                    sections[i].classList.remove('active');
+                    sections[i].style.display = 'none';
+                }
+                var navs = document.querySelectorAll('.nav-btn');
+                for (var j = 0; j < navs.length; j++) {
+                    navs[j].classList.remove('active');
+                }
                 var targetSec = document.getElementById('tab-' + tabName);
                 var targetNav = document.getElementById('nav-' + tabName);
-                if (targetSec) targetSec.classList.add('active');
-                if (targetNav) targetNav.classList.add('active');
+                if (targetSec) {
+                    targetSec.classList.add('active');
+                    targetSec.style.display = 'block';
+                }
+                if (targetNav) {
+                    targetNav.classList.add('active');
+                }
+                window.scrollTo({ top: 0, behavior: 'instant' });
             } catch (e) {}
+        }
+
+        function bindNavigationEvents() {
+            var navBtns = document.querySelectorAll('.nav-btn[data-tab]');
+            for (var i = 0; i < navBtns.length; i++) {
+                (function(btn) {
+                    var tabKey = btn.getAttribute('data-tab');
+                    var handler = function(ev) {
+                        if (ev && ev.cancelable) ev.preventDefault();
+                        switchTab(tabKey);
+                    };
+                    btn.removeEventListener('click', handler);
+                    btn.addEventListener('click', handler, false);
+                    btn.addEventListener('touchend', handler, { passive: false });
+                })(navBtns[i]);
+            }
+
+            var vipBadge = document.getElementById('headerVipBadge');
+            if (vipBadge) {
+                var vipHandler = function(ev) {
+                    if (ev && ev.cancelable) ev.preventDefault();
+                    switchTab('vip');
+                };
+                vipBadge.addEventListener('click', vipHandler, false);
+                vipBadge.addEventListener('touchend', vipHandler, { passive: false });
+            }
         }
 
         function showToast(msg) {
@@ -1125,24 +1172,28 @@
         }
 
         async function fetchCleanMedia(url) {
-            const lowerUrl = url.toLowerCase();
+            const cleanUrl = String(url || "").trim();
+            const lowerUrl = cleanUrl.toLowerCase();
 
-            if (lowerUrl.includes('tiktok')) {
-                const res = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`);
-                const json = await res.json();
-                if (json && json.code === 0 && json.data) {
-                    return {
-                        videoUrl: json.data.play || json.data.wmplay || "",
-                        hdUrl: json.data.hdplay || json.data.play || "",
-                        audioUrl: json.data.music || "",
-                        title: json.data.title || "فيديو تيك توك بدون علامة مائية"
-                    };
-                }
+            if (lowerUrl.includes("tiktok")) {
+                try {
+                    const res = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(cleanUrl)}&_t=${Date.now()}`, { cache: "no-store" });
+                    const json = await res.json();
+                    if (json && json.code === 0 && json.data) {
+                        return {
+                            videoUrl: json.data.play || json.data.wmplay || "",
+                            hdUrl: json.data.hdplay || json.data.play || "",
+                            audioUrl: json.data.music || "",
+                            title: json.data.title || "فيديو تيك توك بدون علامة مائية"
+                        };
+                    }
+                } catch (_) {}
             }
 
             const endpoints = [
                 "https://api.cobalt.tools/",
-                "https://cobalt.api.timelessnesses.me/"
+                "https://cobalt.api.timelessnesses.me/",
+                "https://co.wuk.sh/api/json"
             ];
 
             for (const endpoint of endpoints) {
@@ -1153,15 +1204,19 @@
                             "Accept": "application/json",
                             "Content-Type": "application/json"
                         },
-                        body: JSON.stringify({ url: url })
+                        body: JSON.stringify({
+                            url: cleanUrl,
+                            videoQuality: "1080"
+                        })
                     });
 
                     if (cobaltRes.ok) {
                         const cData = await cobaltRes.json();
-                        if (cData && cData.url) {
+                        const extractedUrl = cData.url || (Array.isArray(cData.picker) && cData.picker[0] && cData.picker[0].url) || "";
+                        if (extractedUrl) {
                             return {
-                                videoUrl: cData.url,
-                                hdUrl: cData.url,
+                                videoUrl: extractedUrl,
+                                hdUrl: extractedUrl,
                                 audioUrl: cData.audio || "",
                                 title: "فيديو جاهز بدون علامة مائية"
                             };
@@ -1174,398 +1229,36 @@
         }
 
         async function processVideoLink() {
-            const urlInput = document.getElementById('videoUrl');
-            const rawUrl = urlInput ? urlInput.value.trim() : "";
-            if (!rawUrl || !rawUrl.startsWith('http')) {
-                showToast("يرجى إدخال رابط فيديو صحيح");
+            const urlInput = document.getElementById("videoUrl");
+            let rawUrl = urlInput ? urlInput.value.trim() : "";
+
+            if (!rawUrl) {
+                showToast("الصق رابط الفيديو أولاً في الحقل ثم اضغط تحميل");
+                if (urlInput) urlInput.focus();
                 return;
+            }
+
+            if (!/^https?:\/\//i.test(rawUrl)) {
+                rawUrl = "https://" + rawUrl;
+                if (urlInput) urlInput.value = rawUrl;
             }
 
             if (!isVipActive()) {
-                const used = parseInt(localStorage.getItem('ultrasave_quota_used') || '0', 10);
+                const used = parseInt(localStorage.getItem("ultrasave_quota_used") || "0", 10);
                 if (used >= DAILY_FREE_LIMIT) {
                     showToast("انتهى الحد اليومي! استرد كود VIP للمواصلة");
-                    switchTab('vip');
+                    switchTab("vip");
                     return;
                 }
             }
 
-            const btnLoader = document.getElementById('btnLoader');
-            const btnIcon = document.getElementById('btnIcon');
-            const btnText = document.getElementById('btnText');
-            const resultBox = document.getElementById('resultBox');
-            const videoPlayer = document.getElementById('cleanVideoPlayer');
+            const btnLoader = document.getElementById("btnLoader");
+            const btnIcon = document.getElementById("btnIcon");
+            const btnText = document.getElementById("btnText");
+            const resultBox = document.getElementById("resultBox");
+            const videoPlayer = document.getElementById("cleanVideoPlayer");
 
-            if (btnLoader) btnLoader.style.display = 'inline-block';
-            if (btnIcon) btnIcon.style.display = 'none';
-            if (btnText) btnText.textContent = 'جاري إزالة العلامة المائية وتجهيز الفيديو...';
-            if (resultBox) resultBox.style.display = 'none';
-            resetQualityState();
-
-            try {
-                const fetched = await fetchCleanMedia(rawUrl);
-                if (!fetched.videoUrl) {
-                    throw new Error("لم يتم العثور على رابط فيديو مباشر");
-                }
-
-                currentUrl = rawUrl;
-                mediaData = fetched;
-
-                const platEl = document.getElementById('detectedPlatform');
-                const titleEl = document.getElementById('videoTitlePreview');
-                if (platEl) platEl.textContent = `فيديو ${detectPlatformName(rawUrl)} نظيف`;
-                if (titleEl) titleEl.textContent = fetched.title;
-
-                if (videoPlayer) {
-                    videoPlayer.src = fetched.videoUrl;
-                    videoPlayer.load();
-                }
-                if (resultBox) {
-                    resultBox.style.display = 'block';
-                    resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
-
-                if (!isVipActive()) {
-                    const used = parseInt(localStorage.getItem('ultrasave_quota_used') || '0', 10);
-                    localStorage.setItem('ultrasave_quota_used', String(used + 1));
-                    updateQuotaDisplay();
-                }
-
-                showToast("تم تجهيز الفيديو بدون علامة مائية!");
-            } catch (err) {
-                const platform = detectPlatformName(rawUrl);
-                if (platform === 'YouTube') {
-                    showToast("يوتيوب يقيّد الاستخراج المباشر حالياً، جرّب تيك توك أو رابطاً آخر");
-                } else {
-                    showToast("تعذر استخراج الفيديو حالياً، جرّب رابطاً آخر أو أعد المحاولة");
-                }
-            } finally {
-                if (btnLoader) btnLoader.style.display = 'none';
-                if (btnIcon) btnIcon.style.display = 'inline-block';
-                if (btnText) btnText.textContent = 'إزالة العلامة المائية وعرض الفيديو';
-            }
-        }
-
-        function saveToGallery() {
-            const targetLink = (isQualityBoosted && mediaData.hdUrl) ? mediaData.hdUrl : mediaData.videoUrl;
-            if (!targetLink) {
-                showToast("لا يوجد فيديو جاهز للحفظ");
-                return;
-            }
-
-            const preset = activePresets[selectedPresetKey] || DEFAULT_PRESETS["4k_ultra"];
-            const modeName = isQualityBoosted ? (preset.label || selectedPresetKey) : "HD";
-            const fileTag = modeName.replace(/[^A-Za-z0-9]/g, '_');
-
-            const anchor = document.createElement('a');
-            anchor.href = targetLink;
-            anchor.download = `UltraSave_${fileTag}_${Date.now()}.mp4`;
-            anchor.target = '_blank';
-            anchor.rel = 'noopener noreferrer';
-            document.body.appendChild(anchor);
-            anchor.click();
-            document.body.removeChild(anchor);
-
-            saveToHistory(currentUrl, `حفظ في المعرض (${modeName})`);
-            showToast(`جاري حفظ الفيديو إلى جهازك (${modeName})...`);
-        }
-
-        function triggerDownload(type, label, requiresVip) {
-            if (requiresVip && !isVipActive()) {
-                showToast("هذه الميزة متاحة بعد استرداد كود VIP");
-                switchTab('vip');
-                return;
-            }
-
-            let targetLink = mediaData.videoUrl;
-            let fileExt = "mp4";
-
-            if (type === 'audio') {
-                if (!mediaData.audioUrl) {
-                    showToast("الصوت المستقل غير متوفر لهذا الرابط");
-                    return;
-                }
-                targetLink = mediaData.audioUrl;
-                fileExt = "mp3";
-            }
-
-            if (!targetLink) {
-                showToast("لا يوجد رابط تحميل متاح حالياً");
-                return;
-            }
-
-            const anchor = document.createElement('a');
-            anchor.href = targetLink;
-            anchor.download = `UltraSave_${Date.now()}.${fileExt}`;
-            anchor.target = '_blank';
-            anchor.rel = 'noopener noreferrer';
-            document.body.appendChild(anchor);
-            anchor.click();
-            document.body.removeChild(anchor);
-
-            saveToHistory(currentUrl, label);
-            showToast(`بدأ التحميل: ${label}`);
-        }
-
-        function saveToHistory(url, quality) {
-            try {
-                const history = JSON.parse(localStorage.getItem('ultrasave_history') || '[]');
-                history.unshift({
-                    url: url,
-                    quality: quality,
-                    platform: detectPlatformName(url),
-                    date: new Date().toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' })
-                });
-                localStorage.setItem('ultrasave_history', JSON.stringify(history.slice(0, 25)));
-            } catch (e) {}
-            renderHistory();
-        }
-
-        function renderHistory() {
-            try {
-                const container = document.getElementById('historyContainer');
-                if (!container) return;
-                const history = JSON.parse(localStorage.getItem('ultrasave_history') || '[]');
-
-                if (history.length === 0) {
-                    container.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:13px; padding:25px 0;">لا توجد تحميلات محفوظة بعد</p>`;
-                    return;
-                }
-
-                container.innerHTML = history.map(function(item) {
-                    return `
-                        <div class="history-item">
-                            <div class="history-info">
-                                <p>${item.url}</p>
-                                <span>${item.platform} • ${item.quality} • ${item.date}</span>
-                            </div>
-                            <button type="button" onclick="copySavedLink('${item.url}')" style="background:var(--bg-card); border:1px solid var(--border); color:var(--primary); padding:7px 10px; border-radius:8px; font-size:11px; cursor:pointer; flex-shrink:0;">
-                                نسخ
-                            </button>
-                        </div>
-                    `;
-                }).join('');
-            } catch (e) {}
-        }
-
-        function copySavedLink(url) {
-            try {
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(url);
-                }
-            } catch (e) {}
-            showToast("تم نسخ الرابط");
-        }
-
-        function clearHistory() {
-            try {
-                localStorage.removeItem('ultrasave_history');
-            } catch (e) {}
-            renderHistory();
-            showToast("تم مسح السجل");
-        }
-
-        function sanitizeCodeKey(code) {
-            return code.replace(/[^A-Z0-9]/g, '');
-        }
-
-        async function isCodeAlreadyRedeemedGlobally(code) {
-            const safeKey = sanitizeCodeKey(code);
-            const res = await fetch(`${FIREBASE_DB_URL}/ultrasave_redeemed_codes/${safeKey}.json`);
-            if (!res.ok) throw new Error("تعذر الاتصال بقاعدة البيانات");
-            const data = await res.json();
-            return Boolean(data);
-        }
-
-        async function claimCodeGlobally(code) {
-            const safeKey = sanitizeCodeKey(code);
-            const payload = {
-                code: code,
-                redeemedAt: Date.now()
-            };
-            const res = await fetch(`${FIREBASE_DB_URL}/ultrasave_redeemed_codes/${safeKey}.json`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-            if (!res.ok) throw new Error("فشل تسجيل استخدام الكود");
-        }
-
-        async function redeemVipCode() {
-            const input = document.getElementById('vipCodeInput');
-            const redeemBtn = document.getElementById('redeemBtn');
-            const code = input ? input.value.trim().toUpperCase() : "";
-
-            if (!code) {
-                showToast("أدخل كود الاسترداد أولاً");
-                return;
-            }
-
-            if (!MASTER_REDEEM_CODES.includes(code)) {
-                showToast("كود الاسترداد غير صحيح!");
-                return;
-            }
-
-            let localUsed = [];
-            try {
-                localUsed = JSON.parse(localStorage.getItem('ultrasave_redeemed_codes') || '[]');
-            } catch (e) {}
-
-            if (localUsed.includes(code)) {
-                showToast("هذا الكود مستخدم مسبقاً ولا يمكن استخدامه مرة أخرى");
-                return;
-            }
-
-            if (redeemBtn) {
-                redeemBtn.disabled = true;
-                redeemBtn.textContent = "جاري التحقق وقفل الكود...";
-            }
-
-            try {
-                const takenGlobally = await isCodeAlreadyRedeemedGlobally(code);
-                if (takenGlobally) {
-                    localUsed.push(code);
-                    try { localStorage.setItem('ultrasave_redeemed_codes', JSON.stringify(localUsed)); } catch (e) {}
-                    showToast("هذا الكود تم استخدامه من شخص آخر مسبقاً!");
-                    return;
-                }
-
-                await claimCodeGlobally(code);
-
-                localUsed.push(code);
-                const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
-                const currentExpiry = parseInt(localStorage.getItem('ultrasave_vip_expiry') || '0', 10);
-                const newExpiry = Math.max(Date.now(), currentExpiry) + thirtyDaysMs;
-
-                try {
-                    localStorage.setItem('ultrasave_redeemed_codes', JSON.stringify(localUsed));
-                    localStorage.setItem('ultrasave_vip_expiry', String(newExpiry));
-                } catch (e) {}
-
-                if (input) input.value = '';
-                checkVipStatus();
-                showToast("تم استرداد الكود وقفلُه لمرة واحدة وتفعيل VIP لمدة 30 يوماً!");
-            } catch (err) {
-                showToast("تأكد من اتصال الإنترنت لإتمام التحقق من الكود");
-            } finally {
-                if (redeemBtn) {
-                    redeemBtn.disabled = false;
-                    redeemBtn.textContent = "استرداد الكود الآن";
-                }
-            }
-        }
-
-        function compareVersions(remoteVer, localVer) {
-            const r = String(remoteVer || "1.0").split(".").map(Number);
-            const l = String(localVer || "1.0").split(".").map(Number);
-            for (let i = 0; i < Math.max(r.length, l.length); i++) {
-                const numR = r[i] || 0;
-                const numL = l[i] || 0;
-                if (numR > numL) return true;
-                if (numR < numL) return false;
-            }
-            return false;
-        }
-
-        function renderRemoteAnnouncement(announcement) {
-            try {
-                const existing = document.getElementById("remoteAnnouncementBox");
-                if (existing) existing.remove();
-
-                if (!announcement || !announcement.enabled || !announcement.text) return;
-                const container = document.querySelector(".container");
-                if (!container) return;
-
-                const box = document.createElement("div");
-                box.id = "remoteAnnouncementBox";
-                box.style.cssText = "background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.35);color:#f4f6fb;padding:12px 14px;border-radius:14px;font-size:12px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;";
-                box.innerHTML = `<span>${announcement.text}</span><button type="button" onclick="this.parentElement.remove()" style="background:none;border:none;color:#8b95b0;font-size:14px;cursor:pointer;">X</button>`;
-                container.prepend(box);
-            } catch (e) {}
-        }
-
-        function showUpdateModal(cfg) {
-            try {
-                const oldModal = document.getElementById("remoteUpdateModal");
-                if (oldModal) oldModal.remove();
-
-                const isForced = Boolean(cfg.force_update);
-                const featuresList = Array.isArray(cfg.new_features) && cfg.new_features.length
-                    ? `<ul style="list-style:none;margin:0 0 14px;padding:0;display:flex;flex-direction:column;gap:6px;">${
-                        cfg.new_features.map(function(f) {
-                            return `<li style="font-size:12px;color:#f4f6fb;background:#1a2030;padding:8px 10px;border-radius:10px;border:1px solid #232b40;">+ ${f}</li>`;
-                        }).join('')
-                      }</ul>`
-                    : "";
-
-                const modal = document.createElement("div");
-                modal.id = "remoteUpdateModal";
-                modal.style.cssText = "position:fixed;inset:0;background:rgba(5,8,15,0.92);backdrop-filter:blur(8px);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;";
-
-                const cancelBtnHtml = isForced
-                    ? ""
-                    : `<button type="button" onclick="document.getElementById('remoteUpdateModal').remove()" style="flex:1;background:#1a2030;color:#8b95b0;border:1px solid #232b40;padding:12px;border-radius:12px;font-weight:700;cursor:pointer;">لاحقاً</button>`;
-
-                modal.innerHTML = `
-                    <div style="background:#121622;border:1px solid ${isForced ? '#ffb300' : '#232b40'};border-radius:18px;padding:20px;max-width:410px;width:100%;text-align:right;box-shadow:0 16px 40px rgba(0,0,0,0.65);">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                            <h3 style="color:${isForced ? '#ffb300' : '#00e5ff'};font-size:17px;">${isForced ? 'تحديث إجباري متوفر' : 'تحديث جديد متوفر'} (${cfg.latest_version})</h3>
-                        </div>
-                        <p style="color:#8b95b0;font-size:13px;line-height:1.6;margin-bottom:12px;">${cfg.update_notes || "تحسينات وميزات جديدة متوفرة الآن."}</p>
-                        ${featuresList}
-                        <div style="display:flex;gap:10px;">
-                            <a href="${cfg.apk_url || "https://t.me/beschainat"}" target="_blank" rel="noopener noreferrer" style="flex:1;text-align:center;text-decoration:none;background:linear-gradient(135deg,#00e5ff,#0088ff);color:#05080f;padding:12px;border-radius:12px;font-weight:800;font-size:13px;">تحديث التطبيق الآن</a>
-                            ${cancelBtnHtml}
-                        </div>
-                    </div>
-                `;
-                document.body.appendChild(modal);
-            } catch (e) {}
-        }
-
-        function applyRemoteQualitySettings(qCfg) {
-            if (!qCfg || qCfg.enabled === false) return;
-            if (qCfg.presets && typeof qCfg.presets === "object" && Object.keys(qCfg.presets).length) {
-                activePresets = qCfg.presets;
-            }
-            if (qCfg.default_preset && activePresets[qCfg.default_preset]) {
-                selectedPresetKey = qCfg.default_preset;
-            }
-            renderQualityPresets();
-        }
-
-        async function checkRemoteConfig() {
-            try {
-                const res = await fetch(`${REMOTE_CONFIG_URL}?t=${Date.now()}`, { cache: "no-store" });
-                if (!res.ok) return;
-                const cfg = await res.json();
-
-                if (Array.isArray(cfg.extra_codes)) {
-                    cfg.extra_codes.forEach(function(c) {
-                        const clean = String(c).trim().toUpperCase();
-                        if (clean && !MASTER_REDEEM_CODES.includes(clean)) {
-                            MASTER_REDEEM_CODES.push(clean);
-                        }
-                    });
-                }
-
-                applyRemoteQualitySettings(cfg.quality_settings);
-                renderRemoteAnnouncement(cfg.announcement);
-
-                if (compareVersions(cfg.latest_version, APP_VERSION)) {
-                    showUpdateModal(cfg);
-                }
-            } catch (_) {}
-        }
-
-        window.addEventListener('DOMContentLoaded', function() {
-            checkDailyQuota();
-            checkVipStatus();
-            renderHistory();
-            renderQualityPresets();
-            checkRemoteConfig();
-            setInterval(checkVipStatus, 1000);
-        });
-    </script>
-</body>
-</html>
+            if (btnLoader) btnLoader.style.display = "inline-block";
+            if (btnIcon) btnIcon.style.display = "none";
+            if (btnText) btnText.textContent = "جاري إزالة العلامة المائية وتجهيز الفيديو...";
+            if (resultBox) resultBox.sty
