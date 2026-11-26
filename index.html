@@ -1,53 +1,52 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UltraSave - فيديو بدون علامة مائية</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>UltraSave - تحميل بدون علامة مائية</title>
     <style>
         :root {
-            --bg-main: #090b10;
-            --bg-card: #121622;
-            --bg-input: #1a2030;
-            --primary: #00e5ff;
-            --primary-glow: rgba(0, 229, 255, 0.25);
-            --vip-gold: #ffb300;
-            --vip-glow: rgba(255, 179, 0, 0.25);
-            --text-main: #f4f6fb;
-            --text-muted: #8b95b0;
-            --danger: #ff4757;
-            --success: #2ed573;
-            --border: #232b40;
+            --bg-main: #090d16;
+            --bg-card: #111827;
+            --bg-card-2: #161f33;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-2: #818cf8;
+            --vip: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: rgba(148, 163, 184, 0.16);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg-main);
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            background: radial-gradient(circle at top, #131c31 0%, var(--bg-main) 60%);
             color: var(--text-main);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding-bottom: 85px;
+            padding-bottom: 84px;
+            line-height: 1.6;
         }
 
-        header {
-            background: rgba(18, 22, 34, 0.92);
-            backdrop-filter: blur(12px);
-            padding: 15px 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
+        .top-bar {
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 30;
+            background: rgba(9, 13, 22, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
         }
 
         .brand {
@@ -57,93 +56,95 @@
         }
 
         .brand-logo {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, var(--primary), #0077ff);
-            border-radius: 10px;
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 14px var(--primary-glow);
+            color: #06101e;
+            box-shadow: 0 6px 18px rgba(56, 189, 248, 0.25);
         }
 
-        .brand h1 {
-            font-size: 17px;
-            font-weight: 700;
+        .brand-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 0.2px;
         }
 
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
+        .brand-sub {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .header-actions {
             display: flex;
             align-items: center;
+            gap: 8px;
+        }
+
+        .vip-pill {
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            background: rgba(245, 158, 11, 0.12);
+            color: #fbbf24;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
             gap: 6px;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            color: var(--text-muted);
             cursor: pointer;
-            transition: 0.3s;
-            touch-action: manipulation;
         }
 
-        .status-badge * {
-            pointer-events: none;
+        .vip-pill.active {
+            background: rgba(16, 185, 129, 0.16);
+            border-color: rgba(16, 185, 129, 0.45);
+            color: #34d399;
         }
 
-        .status-badge.vip-active {
-            background: rgba(255, 179, 0, 0.14);
-            border-color: var(--vip-gold);
-            color: var(--vip-gold);
-            box-shadow: 0 0 12px var(--vip-glow);
+        .sync-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .sync-btn:hover {
+            border-color: var(--accent);
+        }
+
+        .sync-btn.spinning svg {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         .container {
-            padding: 18px;
-            max-width: 520px;
+            max-width: 680px;
             margin: 0 auto;
-            width: 100%;
+            padding: 16px;
         }
 
-        .tab-section {
+        .announcement-banner {
             display: none;
-            animation: fadeIn 0.25s ease;
-        }
-
-        .tab-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .platforms-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            margin-bottom: 18px;
-        }
-
-        .platform-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
+            margin-bottom: 14px;
+            padding: 12px 14px;
             border-radius: 14px;
-            padding: 10px 4px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            font-size: 10px;
-            color: var(--text-muted);
-        }
-
-        .platform-item svg {
-            width: 20px;
-            height: 20px;
-            fill: var(--primary);
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.14), rgba(129, 140, 248, 0.14));
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            font-size: 0.86rem;
+            color: #e0f2fe;
         }
 
         .card {
@@ -151,444 +152,245 @@
             border: 1px solid var(--border);
             border-radius: 18px;
             padding: 18px;
-            margin-bottom: 18px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+            margin-bottom: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-desc {
+            font-size: 0.84rem;
+            color: var(--text-muted);
+            margin-bottom: 14px;
         }
 
         .input-group {
-            position: relative;
-            margin-bottom: 14px;
-        }
-
-        .url-input {
-            width: 100%;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 15px 15px 15px 82px;
-            border-radius: 14px;
-            font-size: 13px;
-            outline: none;
-            transition: 0.25s;
-            direction: ltr;
-        }
-
-        .url-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-glow);
-        }
-
-        .paste-btn {
-            position: absolute;
-            left: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #252f47;
-            color: var(--primary);
-            border: none;
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .btn-primary {
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary), #0088ff);
-            color: #05080f;
-            border: none;
-            padding: 15px;
-            border-radius: 14px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 18px var(--primary-glow);
-            transition: transform 0.15s;
-        }
-
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
-
-        .quality-panel {
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 12px;
-            margin-bottom: 12px;
-        }
-
-        .quality-panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--vip-gold);
-        }
-
-        .presets-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        .preset-btn {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 9px 10px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-            text-align: center;
-        }
-
-        .preset-btn.active {
-            background: rgba(255, 179, 0, 0.16);
-            border-color: var(--vip-gold);
-            color: var(--vip-gold);
-        }
-
-        .preset-meta {
-            font-size: 11px;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        .btn-4k {
-            width: 100%;
-            background: linear-gradient(135deg, #ffd54f, #ff8f00);
-            color: #140d00;
-            border: none;
-            padding: 13px;
-            border-radius: 14px;
-            font-size: 13px;
-            font-weight: 800;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 16px var(--vip-glow);
-        }
-
-        .btn-4k.active-4k {
-            background: linear-gradient(135deg, #00e5ff, #00b0ff);
-            color: #05080f;
-            box-shadow: 0 4px 16px var(--primary-glow);
-        }
-
-        .btn-save-gallery {
-            width: 100%;
-            background: linear-gradient(135deg, #2ed573, #1abc9c);
-            color: #04120a;
-            border: none;
-            padding: 14px;
-            border-radius: 14px;
-            font-size: 14px;
-            font-weight: 800;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 16px rgba(46, 213, 115, 0.25);
-        }
-
-        .btn-vip {
-            background: linear-gradient(135deg, #ffd54f, #ff8f00);
-            color: #140d00;
-            box-shadow: 0 4px 18px var(--vip-glow);
-        }
-
-        .result-box {
-            display: none;
-            margin-top: 20px;
-            border-top: 1px solid var(--border);
-            padding-top: 18px;
-        }
-
-        .clean-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(46, 213, 115, 0.12);
-            color: var(--success);
-            border: 1px solid rgba(46, 213, 115, 0.35);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .quality-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: rgba(255, 179, 0, 0.14);
-            color: var(--vip-gold);
-            border: 1px solid rgba(255, 179, 0, 0.4);
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 800;
-            margin-right: 6px;
-            margin-bottom: 12px;
-        }
-
-        .video-player-frame {
-            position: relative;
-            width: 100%;
-            border-radius: 16px;
-            overflow: hidden;
-            background: #000;
-            border: 1px solid var(--border);
-            margin-bottom: 14px;
-        }
-
-        .video-player-frame video {
-            width: 100%;
-            max-height: 380px;
-            display: block;
-            background: #05070c;
-            transition: filter 0.3s ease;
-        }
-
-        .video-status-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--bg-input);
-            padding: 10px 14px;
-            border-radius: 12px;
-            margin-bottom: 14px;
-            font-size: 12px;
-            gap: 8px;
-        }
-
-        .download-options {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
 
-        .dl-option-btn {
-            background: var(--bg-input);
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 13px 14px;
+            border-radius: 12px;
             border: 1px solid var(--border);
+            background: var(--bg-card-2);
             color: var(--text-main);
+            font-size: 0.92rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        .btn {
+            width: 100%;
             padding: 13px 16px;
+            border: none;
             border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            font-size: 0.95rem;
+            font-weight: 800;
             cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: 0.2s;
-            text-decoration: none;
-        }
-
-        .dl-option-btn:hover {
-            border-color: var(--primary);
-        }
-
-        .dl-option-btn.locked {
-            border-color: rgba(255, 179, 0, 0.35);
-        }
-
-        .tag-vip {
-            background: var(--vip-gold);
-            color: #000;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 10px;
-            font-weight: 800;
-        }
-
-        .quota-bar {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 12px;
-            padding: 0 4px;
-        }
-
-        .history-item {
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px 14px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .history-info {
-            overflow: hidden;
-            padding-left: 10px;
-        }
-
-        .history-info p {
-            font-size: 13px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            direction: ltr;
-            text-align: right;
-        }
-
-        .history-info span {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .vip-banner {
-            background: linear-gradient(145deg, #1f1a0e, #121622);
-            border: 1px solid rgba(255, 179, 0, 0.4);
-            border-radius: 18px;
-            padding: 20px;
-            margin-bottom: 18px;
-        }
-
-        .vip-banner h2 {
-            color: var(--vip-gold);
-            font-size: 18px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .vip-features {
-            list-style: none;
-            margin: 14px 0;
-        }
-
-        .vip-features li {
-            font-size: 13px;
-            color: var(--text-main);
-            margin-bottom: 9px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .timer-box {
-            background: rgba(255, 179, 0, 0.1);
-            border: 1px dashed var(--vip-gold);
-            padding: 12px;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 14px;
-            display: none;
-        }
-
-        .timer-box span {
-            font-size: 17px;
-            font-weight: 800;
-            color: var(--vip-gold);
-            display: block;
-            margin-top: 4px;
-            direction: ltr;
-        }
-
-        .tg-link {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            background: #1b2838;
-            color: #38bdf8;
-            text-decoration: none;
-            padding: 13px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 700;
-            margin-top: 12px;
-            border: 1px solid rgba(56, 189, 248, 0.3);
+            transition: opacity 0.2s ease, transform 0.15s ease;
         }
 
-        nav {
+        .btn:active {
+            transform: scale(0.99);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #06101e;
+        }
+
+        .btn-vip {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: #1a1102;
+        }
+
+        .btn-secondary {
+            background: var(--bg-card-2);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        .status-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 12px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: var(--bg-card-2);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .result-box {
+            display: none;
+            margin-top: 16px;
+            padding: 14px;
+            border-radius: 14px;
+            background: var(--bg-card-2);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+        }
+
+        video {
+            width: 100%;
+            max-height: 320px;
+            border-radius: 12px;
+            background: #000;
+            margin-bottom: 12px;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 12px 0 16px;
+        }
+
+        .feature-list li {
+            font-size: 0.86rem;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-input {
+            text-align: center;
+            letter-spacing: 1.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .history-item {
+            padding: 12px;
+            border-radius: 12px;
+            background: var(--bg-card-2);
+            border: 1px solid var(--border);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .history-title {
+            font-size: 0.86rem;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .history-meta {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+        }
+
+        .small-link-btn {
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(56, 189, 248, 0.16);
+            color: var(--accent);
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(18, 22, 34, 0.96);
+            z-index: 30;
+            background: rgba(9, 13, 22, 0.95);
             backdrop-filter: blur(12px);
             border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0 14px;
-            z-index: 500;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            padding: 8px 6px;
         }
 
         .nav-btn {
-            background: none;
+            background: transparent;
             border: none;
             color: var(--text-muted);
+            padding: 6px 4px;
+            border-radius: 10px;
+            font-size: 0.76rem;
+            font-weight: 700;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
-            font-size: 11px;
-            font-weight: 600;
+            gap: 4px;
             cursor: pointer;
-            width: 33.3%;
-            position: relative;
-            z-index: 501;
-            touch-action: manipulation;
-        }
-
-        .nav-btn * {
-            pointer-events: none;
-        }
-
-        .nav-btn svg {
-            width: 22px;
-            height: 22px;
-            fill: currentColor;
         }
 
         .nav-btn.active {
-            color: var(--primary);
+            color: var(--accent);
+            background: rgba(56, 189, 248, 0.1);
         }
 
         .toast {
             position: fixed;
-            top: 74px;
+            top: 68px;
             left: 50%;
-            transform: translateX(-50%) translateY(-20px);
-            background: #1e2638;
-            color: var(--text-main);
-            border: 1px solid var(--primary);
-            padding: 11px 20px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 600;
+            transform: translateX(-50%) translateY(-12px);
+            z-index: 60;
+            background: #1e293b;
+            color: #f8fafc;
+            border: 1px solid rgba(56, 189, 248, 0.45);
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-size: 0.84rem;
+            font-weight: 700;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
             opacity: 0;
             pointer-events: none;
-            transition: 0.3s;
-            z-index: 999;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            white-space: nowrap;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            max-width: 92%;
+            text-align: center;
         }
 
         .toast.show {
@@ -596,593 +398,603 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        .loader {
+        .spinner {
             width: 18px;
             height: 18px;
-            border: 2.5px solid rgba(0, 0, 0, 0.2);
-            border-top-color: #000;
+            border: 2.5px solid rgba(6, 16, 30, 0.25);
+            border-top-color: #06101e;
             border-radius: 50%;
-            animation: spin 0.7s linear infinite;
+            animation: spin 0.75s linear infinite;
             display: none;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .credits {
-            text-align: center;
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 22px;
-            opacity: 0.7;
+        .spinner.show {
+            display: inline-block;
         }
     </style>
 </head>
 <body>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    <header>
+    <header class="top-bar">
         <div class="brand">
-            <div class="brand-logo">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="#05080f">
-                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            <div class="brand-logo" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3v12"></path>
+                    <path d="m7 10 5 5 5-5"></path>
+                    <path d="M5 21h14"></path>
                 </svg>
             </div>
-            <h1>UltraSave</h1>
+            <div>
+                <div class="brand-title">UltraSave</div>
+                <div class="brand-sub">تحميل سريع بدون علامة مائية</div>
+            </div>
         </div>
-        <div id="headerVipBadge" class="status-badge" onclick="switchTab('vip')">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-            </svg>
-            <span id="badgeText">مجاني</span>
+
+        <div class="header-actions">
+            <button id="syncBtn" class="sync-btn" type="button" title="مزامنة فورية" onclick="manualSilentSync()">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                    <path d="M3 3v5h5"></path>
+                    <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
+                    <path d="M16 16h5v5"></path>
+                </svg>
+            </button>
+
+            <button id="vipBadge" class="vip-pill" type="button" onclick="switchTab('vip')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 7.1-1.01L12 2z"></path>
+                </svg>
+                <span id="vipBadgeText">مجاني</span>
+            </button>
         </div>
     </header>
 
-    <div id="toast" class="toast"></div>
+    <main class="container">
+        <div id="announcementBanner" class="announcement-banner"></div>
 
-    <div class="container">
-        <section id="tab-home" class="tab-section active">
-            <div class="platforms-grid">
-                <div class="platform-item">
-                    <svg viewBox="0 0 24 24"><path d="M16.6 5.82s.51.5 0 0A4.278 4.278 0 0 1 15.54 3h-3.09v12.4a2.592 2.592 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48z"/></svg>
-                    <span>تيك توك</span>
-                </div>
-                <div class="platform-item">
-                    <svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>
-                    <span>انستغرام</span>
-                </div>
-                <div class="platform-item">
-                    <svg viewBox="0 0 24 24"><path d="M12 2.04c-5.5 0-10 4.49-10 10.02 0 5 3.66 9.15 8.44 9.9v-7H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.23.19 2.23.19v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.45 2.9h-2.33v7a10 10 0 0 0 8.44-9.9c0-5.53-4.5-10.02-10-10.02z"/></svg>
-                    <span>فيسبوك</span>
-                </div>
-                <div class="platform-item">
-                    <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                    <span>يوتيوب</span>
-                </div>
-                <div class="platform-item">
-                    <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                    <span>منصة X</span>
-                </div>
-            </div>
-
+        <!-- الرئيسية -->
+        <section id="tab-home" class="tab-pane active">
             <div class="card">
+                <div class="card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                    <span>استخراج وتحميل الفيديو</span>
+                </div>
+                <p class="card-desc">الصق رابط الفيديو لتجهيزه للتحميل المباشر بجودة عالية.</p>
+
                 <div class="input-group">
-                    <input type="url" id="videoUrl" class="url-input" placeholder="https://vm.tiktok.com/... أو رابط فيديو" autocomplete="off">
-                    <button type="button" class="paste-btn" onclick="pasteFromClipboard()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M19 2h-4.18C14.4.84 13.3 0 12 0c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm7 18H5V4h2v3h10V4h2v16z"/>
-                        </svg>
-                        لصق
+                    <input id="videoUrl" type="text" placeholder="الصق رابط الفيديو هنا (https://...)" dir="ltr" />
+
+                    <select id="qualityPreset" onchange="saveQualityPreset()">
+                        <option value="fhd_clean">1080p FHD Clean</option>
+                        <option value="qhd_2k">2K QHD Pro</option>
+                        <option value="4k_ultra" selected>4K Ultra HD</option>
+                        <option value="8k_master">8K Master HDR</option>
+                    </select>
+
+                    <button id="processBtn" class="btn btn-primary" type="button" onclick="processVideoLink()">
+                        <span id="btnLoader" class="spinner"></span>
+                        <span id="btnIcon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                        </span>
+                        <span id="btnText">تجهيز الفيديو الآن</span>
                     </button>
                 </div>
 
-                <button type="button" class="btn-primary" id="analyzeBtn" onclick="processVideoLink()">
-                    <span class="loader" id="btnLoader"></span>
-                    <svg id="btnIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-                    </svg>
-                    <span id="btnText">إزالة العلامة المائية وعرض الفيديو</span>
-                </button>
-
-                <div class="quota-bar">
-                    <span>الحد اليومي المتبقي:</span>
-                    <strong id="quotaText" style="color: var(--primary);">5 / 5 محاولات</strong>
+                <div class="status-row">
+                    <span id="quotaText">الحد المجاني اليومي: 5 / 5</span>
+                    <span id="activePresetText">الوضع: 4K Ultra HD</span>
                 </div>
 
                 <div id="resultBox" class="result-box">
-                    <div style="display:flex; flex-wrap:wrap; align-items:center;">
-                        <div class="clean-badge">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                            </svg>
-                            <span>بدون علامة مائية</span>
-                        </div>
-                        <span id="qualityBadge" class="quality-pill">HD</span>
-                    </div>
-
-                    <div class="video-player-frame">
-                        <video id="cleanVideoPlayer" controls playsinline preload="metadata"></video>
-                    </div>
-
-                    <div class="quality-panel">
-                        <div class="quality-panel-header">
-                            <span>أوضاع رفع الدقة (من GitHub)</span>
-                            <span id="activePresetBadge">HD</span>
-                        </div>
-                        <div id="presetsGrid" class="presets-grid"></div>
-                        <div id="presetMetaText" class="preset-meta">اختر وضعاً لرفع الدقة وتحسين الصورة قبل الحفظ.</div>
-                    </div>
-
-                    <button type="button" id="boost4kBtn" class="btn-4k" onclick="toggleQualityBoost()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-                        </svg>
-                        <span id="boost4kText">تفعيل رفع الدقة المختار</span>
-                    </button>
-
-                    <button type="button" class="btn-save-gallery" onclick="saveToGallery()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-                        </svg>
-                        <span>حفظ في المعرض</span>
-                    </button>
-
-                    <div class="video-status-bar">
-                        <strong id="detectedPlatform" style="color: var(--text-main);">منصة الفيديو</strong>
-                        <span id="videoTitlePreview" style="color: var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">معاينة مباشرة</span>
-                    </div>
-
-                    <div class="download-options">
-                        <button type="button" class="dl-option-btn locked" onclick="triggerDownload('audio', 'تحميل الصوت فقط MP3', true)">
-                            <span>تحميل الصوت فقط (MP3)</span>
-                            <span class="tag-vip">VIP</span>
-                        </button>
+                    <video id="cleanVideoPlayer" controls playsinline></video>
+                    <div id="videoTitleText" style="font-weight: 700; font-size: 0.9rem; margin-bottom: 10px;"></div>
+                    <div class="action-grid">
+                        <a id="downloadVideoLink" class="btn btn-primary" href="#" download target="_blank" rel="noopener noreferrer">تحميل الفيديو</a>
+                        <a id="downloadAudioLink" class="btn btn-secondary" href="#" download target="_blank" rel="noopener noreferrer">تحميل الصوت</a>
                     </div>
                 </div>
             </div>
-
-            <div class="credits">
-                UltraSave • تطوير: حسين • قناة التيليجرام @beschainat
-            </div>
         </section>
 
-        <section id="tab-history" class="tab-section">
+        <!-- التحميلات -->
+        <section id="tab-history" class="tab-pane">
             <div class="card">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                    <h3 style="font-size:16px;">سجل التحميلات الأخيرة</h3>
-                    <button type="button" onclick="clearHistory()" style="background:none; border:none; color:var(--danger); font-size:12px; cursor:pointer;">مسح السجل</button>
+                <div class="card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>سجل التحميلات</span>
                 </div>
-                <div id="historyContainer">
-                    <p style="text-align:center; color:var(--text-muted); font-size:13px; padding:25px 0;">لا توجد تحميلات محفوظة بعد</p>
-                </div>
+                <p class="card-desc">الروابط والفيديوهات التي قمت بتجهيزها مؤخراً على جهازك.</p>
+                <div id="historyList"></div>
             </div>
         </section>
 
-        <section id="tab-vip" class="tab-section">
-            <div class="vip-banner">
-                <h2>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+        <!-- استرداد VIP -->
+        <section id="tab-vip" class="tab-pane">
+            <div class="card">
+                <div class="card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#f59e0b">
+                        <path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 7.1-1.01L12 2z"></path>
                     </svg>
-                    استرداد كود VIP - UltraSave
-                </h2>
-                <p style="font-size:13px; color:var(--text-muted);">كل كود يعمل لمرة واحدة فقط في النظام؛ بمجرد استخدامه لا يمكن لأي شخص آخر استخدامه.</p>
+                    <span>استرداد كود VIP</span>
+                </div>
+                <p class="card-desc">
+                    كل كود يعمل لمرة واحدة فقط في النظام؛ بمجرد استخدامه يتم تسجيله وقفلُه لمنع مشاركته.
+                </p>
 
-                <ul class="vip-features">
+                <div id="vipStatusBox" class="status-row" style="margin-bottom: 14px;">
+                    <span id="vipStatusText">الحالة الحالية: حساب مجاني</span>
+                    <span id="vipExpiryText"></span>
+                </div>
+
+                <ul class="feature-list">
                     <li>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#2ed573"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                        معالجة وتحميل غير محدود لمدة 30 يوماً
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>معالجة وتحميل غير محدود لمدة 30 يوماً</span>
                     </li>
                     <li>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#2ed573"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                        قفل فوري للكود في قاعدة البيانات لمنع مشاركته
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>قفل فوري للكود لمنع تكرار استخدامه</span>
                     </li>
                     <li>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#2ed573"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                        رفع الدقة المتعددة وحفظ في المعرض والصوت MP3
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>تفعيل أوضاع الدقة المتقدمة وحفظ الصوت</span>
                     </li>
                 </ul>
 
-                <div id="vipTimerBox" class="timer-box">
-                    <small style="color:var(--text-muted);">الوقت المتبقي لاشتراكك</small>
-                    <span id="vipCountdown">00d : 00h : 00m : 00s</span>
+                <div class="input-group">
+                    <input id="vipCodeInput" class="code-input" type="text" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" dir="ltr" />
+                    <button id="redeemBtn" class="btn btn-vip" type="button" onclick="redeemVipCode()">
+                        استرداد الكود الآن
+                    </button>
+                    <a class="btn btn-secondary" href="https://t.me/beschainat" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                        تواصل للحصول على كود استرداد عبر تيليجرام
+                    </a>
                 </div>
-
-                <div class="input-group" style="margin-top:14px;">
-                    <input type="text" id="vipCodeInput" class="url-input" style="padding-left:15px; text-align:center; font-weight:700; letter-spacing:1px;" placeholder="أدخل كود الاسترداد هنا">
-                </div>
-
-                <button type="button" class="btn-primary btn-vip" id="redeemBtn" onclick="redeemVipCode()">
-                    استرداد الكود الآن
-                </button>
-
-                <a href="https://t.me/VIPRONALDO1" target="_blank" rel="noopener noreferrer" class="tg-link">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                    </svg>
-                    تواصل للحصول على كود استرداد عبر تيليجرام
-                </a>
             </div>
         </section>
-    </div>
+    </main>
 
-    <nav id="bottomNav">
-        <button type="button" class="nav-btn active" id="nav-home" data-tab="home" onclick="switchTab('home')">
-            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    <nav class="bottom-nav">
+        <button id="nav-home" class="nav-btn active" type="button" onclick="switchTab('home')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
             <span>الرئيسية</span>
         </button>
-        <button type="button" class="nav-btn" id="nav-history" data-tab="history" onclick="switchTab('history')">
-            <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+
+        <button id="nav-history" class="nav-btn" type="button" onclick="switchTab('history')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
             <span>التحميلات</span>
         </button>
-        <button type="button" class="nav-btn" id="nav-vip" data-tab="vip" onclick="switchTab('vip')">
-            <svg viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+
+        <button id="nav-vip" class="nav-btn" type="button" onclick="switchTab('vip')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
             <span>استرداد VIP</span>
         </button>
     </nav>
 
     <script>
-        function switchTab(tabName) {
-            try {
-                var sections = document.querySelectorAll('.tab-section');
-                for (var i = 0; i < sections.length; i++) {
-                    sections[i].classList.remove('active');
-                    sections[i].style.display = 'none';
-                }
-                var navs = document.querySelectorAll('.nav-btn');
-                for (var j = 0; j < navs.length; j++) {
-                    navs[j].classList.remove('active');
-                }
-                var targetSec = document.getElementById('tab-' + tabName);
-                var targetNav = document.getElementById('nav-' + tabName);
-                if (targetSec) {
-                    targetSec.classList.add('active');
-                    targetSec.style.display = 'block';
-                }
-                if (targetNav) {
-                    targetNav.classList.add('active');
-                }
-                window.scrollTo({ top: 0, behavior: 'instant' });
-            } catch (e) {}
-        }
-
-        function bindNavigationEvents() {
-            var navBtns = document.querySelectorAll('.nav-btn[data-tab]');
-            for (var i = 0; i < navBtns.length; i++) {
-                (function(btn) {
-                    var tabKey = btn.getAttribute('data-tab');
-                    var handler = function(ev) {
-                        if (ev && ev.cancelable) ev.preventDefault();
-                        switchTab(tabKey);
-                    };
-                    btn.removeEventListener('click', handler);
-                    btn.addEventListener('click', handler, false);
-                    btn.addEventListener('touchend', handler, { passive: false });
-                })(navBtns[i]);
-            }
-
-            var vipBadge = document.getElementById('headerVipBadge');
-            if (vipBadge) {
-                var vipHandler = function(ev) {
-                    if (ev && ev.cancelable) ev.preventDefault();
-                    switchTab('vip');
-                };
-                vipBadge.addEventListener('click', vipHandler, false);
-                vipBadge.addEventListener('touchend', vipHandler, { passive: false });
-            }
-        }
-
-        function showToast(msg) {
-            try {
-                var toast = document.getElementById('toast');
-                if (!toast) return;
-                toast.textContent = msg;
-                toast.classList.add('show');
-                clearTimeout(window.__toastTimer);
-                window.__toastTimer = setTimeout(function() {
-                    toast.classList.remove('show');
-                }, 3200);
-            } catch (e) {}
-        }
-
         const APP_VERSION = "1.0";
-        const REMOTE_CONFIG_URL = "https://raw.githubusercontent.com/maybelappasd-stack/ultrasave-remote/refs/heads/main/ultrasave-config.json";
-        const FIREBASE_DB_URL = "https://snapfree-2a562-default-rtdb.firebaseio.com";
-
-        const DEFAULT_PRESETS = {
-            fhd_clean: {
-                label: "1080p FHD Clean",
-                sharpness: 1.04,
-                contrast: 1.03,
-                saturation: 1.05,
-                brightness: 1.01,
-                denoise: true
-            },
-            qhd_2k: {
-                label: "2K QHD Pro",
-                sharpness: 1.1,
-                contrast: 1.06,
-                saturation: 1.1,
-                brightness: 1.02,
-                denoise: true
-            },
-            "4k_ultra": {
-                label: "4K Ultra HD",
-                sharpness: 1.18,
-                contrast: 1.1,
-                saturation: 1.16,
-                brightness: 1.03,
-                denoise: true,
-                hdr_boost: true
-            },
-            "8k_master": {
-                label: "8K Master HDR",
-                sharpness: 1.25,
-                contrast: 1.14,
-                saturation: 1.22,
-                brightness: 1.04,
-                denoise: true,
-                hdr_boost: true,
-                smooth_motion: true
-            }
-        };
+        const DAILY_FREE_LIMIT = 5;
+        const REMOTE_CONFIG_URL = "https://raw.githubusercontent.com/maybelappasd-stack/ultrasave-remote/main/ultrasave-config.json";
+        // ضع رابط قاعدة بيانات Firebase Realtime Database إذا أردت القفل السحابي العالمي، مثال:
+        // const FIREBASE_DB_URL = "https://your-project-default-rtdb.firebaseio.com";
+        const FIREBASE_DB_URL = "";
 
         const MASTER_REDEEM_CODES = [
-            "A7K9-M3P8-Q2L6-W5X4-Z1N8", "B4R2-T8V6-C5J9-F3H7-Y2D6", "C9L5-N1W7-K6P3-S8M4-X7G2",
-            "D3X8-H6B2-V9T4-L1Q5-J8R3", "E6P1-Z4M9-R7C3-W2K8-F5N4", "F8W3-J5S1-N2D7-H9L6-Q4V8",
-            "G2K7-B9F4-X3T8-P6M1-Z5C9", "H5N2-L8Q6-V4R1-C7W3-K9B5", "J1T6-M4X9-S7K2-F8D5-L3P7",
-            "K4V8-P2C7-W9H3-N6J1-R5S8", "L7S3-R6W1-B4M8-T2Q9-X5F4", "M9D5-F1K7-J8V3-C6P2-W4H9",
-            "N2B7-H9L4-Q5X1-S3T8-V6K2", "P5G1-C3W8-M7R4-K9J2-F6D5", "Q8J4-T6N2-L9S5-H1V7-B3M8",
-            "R1W9-X7F3-D5K8-P2C6-J4L1", "S4M2-V8P5-C1R9-W7H3-N6T4", "T7K5-B3J9-F6L2-X8D4-Q1S7",
-            "U2C8-N6W1-R4M7-K5P3-Z9H6", "V5F1-L9T4-J2S8-D7X6-B3Q9", "W8H4-P7C2-M5K9-S1R6-F3N8",
-            "X1J7-R3V6-T9B4-L2W8-C5D1", "Y4L9-S6N3-F8K1-V5P7-H2M4", "Z7P2-W5D8-C4R6-J9T1-K3S5",
-            "A3Q6-K8M1-X2V7-N9F4-L5W2", "B6S9-T2L5-W7H3-P4C8-M1J6", "C8V3-F5J1-K9D6-R2X4-S7N9",
-            "D2W7-M9C4-L6S8-H3P1-V5K2", "E5X1-R7B6-T4K2-N8W9-F3J5", "F9Z4-P3D8-V1L7-C6M2-Q5H8",
-            "G3C6-W8K2-S5N9-J1F4-L7T3", "H7D1-J4V9-X6P3-B2R8-M5S6", "J2F8-L6T3-C9W5-K4N1-P7V9",
-            "K6G3-N8R5-F2M7-W1X4-S9D2", "L9H5-Q1B7-T3V8-P6C4-J2K1", "M4J2-S7C9-L5X1-D8F6-R3W4",
-            "N8K6-V3P4-H9S2-W5T7-C1L8", "P1L9-X5M2-J7B6-F4Q8-N3D5", "Q5M3-R9W7-K2D4-S6H1-V8F2",
-            "R9N7-T4F1-P8C5-L3J6-W2X4", "S3P1-V6K8-M4W2-N7D9-F5C3", "T6Q4-W2J5-R9S7-K1L8-H4V6",
-            "U9R8-X5L3-C7M1-B6P4-J2T5", "V2S5-Y8N6-F4K9-D1W7-L3H8", "W6T2-Z4P9-H7J3-C5R1-M8V4",
-            "X9V7-A1R6-L3S8-K5W2-N4F9", "Y3W4-B6T1-M8C5-P2J7-R9S6", "Z6X8-C9V3-N5K2-L7F4-T1W5",
-            "A2Y5-D7W1-P4S9-H6M3-K8J7", "B5Z9-F3X6-R8L2-V4N7-C1P3", "C4A7-G2H9-J6K3-L8M1-N5P4",
-            "D7B2-H5J8-K1L6-M4N9-P3Q7", "E9C4-J7K2-L5M8-N1P6-Q4R3", "F2D6-K9L4-M7N2-P5Q8-R1S6",
-            "G5E8-L3M6-N9P1-Q7R4-S2T9", "H8F1-M6N4-P2Q9-R5S7-T3V2", "J3G5-N8P2-Q6R9-S4T1-V7W6",
-            "K6H9-P4Q7-R2S5-T8V3-W1X8", "L9J3-Q7R1-S6T4-V2W8-X5Y4", "M2K6-R9S4-T1V7-W5X3-Y8Z2",
-            "N5L8-S3T6-V9W2-X7Y5-Z1A9", "P8M1-T6V9-W4X7-Y2Z5-A3B7", "Q1N4-V8W3-X6Y9-Z5A2-B7C4",
-            "R4P7-W2X5-Y8Z1-A6B9-C3D8", "S7Q9-X5Y2-Z8A4-B1C6-D9E3", "T2R5-Y7Z9-A3B6-C8D1-E4F7",
-            "U5S8-Z2A6-B9C4-D7E3-F1G5", "V8T1-A5B9-C3D7-E6F2-G4H8", "W3V6-B8C2-D5E9-F1G7-H4J2",
-            "X6W9-C4D7-E2F5-G8H1-J3K9", "Y9X2-D6E8-F4G1-H7J5-K2L6", "Z3Y5-E9F1-G7H4-J2K8-L6M3",
-            "A5Z8-F3G6-H9J2-K4L7-M1N5", "B8A1-G6H4-J2K9-L5M3-N7P2", "C1B4-H9J7-K5L2-M8N6-P4Q9",
-            "D4C7-J2K5-L8M1-N6P9-Q3R6", "E7D9-K6L3-M1N7-P4Q2-R8S5", "F1E3-L8M5-N3P9-Q6R4-S2T7",
-            "G4F6-M2N8-P7Q5-R1S9-T6V3", "H7G9-N5P1-Q4R8-S6T2-V9W4", "J2H5-P9Q3-R7S1-T4V6-W8X2",
-            "K5J8-Q2R6-S4T9-V7W3-X1Y5", "L8K1-R5S9-T7V2-W4X6-Y3Z7", "M1L4-S8T2-V5W9-X7Y3-Z6A1",
-            "N4M7-T1V5-W8X2-Y6Z9-A4B8", "P7N9-V4W8-X3Y6-Z1A5-B2C6", "Q9P2-W7X1-Y5Z8-A3B6-C9D4",
-            "R3Q5-X9Y4-Z7A2-B6C8-D1E7", "S6R8-Y2Z6-A9B4-C1D5-E7F3", "T9S1-Z5A8-B3C7-D4E9-F2G6",
-            "U2T4-A8B1-C6D9-E5F3-G7H2", "V5W7-B2C5-D8E1-F9G6-H4J8", "W8X9-C5D8-E3F6-G2H4-J7K1",
-            "X1Y3-D8E2-F7G9-H5J6-K4L8", "Y4Z6-E1F5-G4H2-J9K8-L7M3", "Z7A9-F4G8-H6J3-K2L5-M9N1",
-            "A9B2-G7H5-J1K9-L4M6-N8P3", "B2C5-H1J8-K6L3-M9N7-P5Q4", "C5D8-J4K2-L9M6-N3P1-Q8R7",
-            "D8E1-K7L5-M3N9-P6Q4-R2S8"
+            "A7K9-M3P8-Q2L6-W5X4-Z1N8",
+            "B4R2-T8V6-C5J9-F3H7-Y2D6",
+            "C9L5-N1W7-K6P3-S8M4-X7G2",
+            "D3X8-H6B2-V9T4-L1Q5-J8R3",
+            "E6P1-Z4M9-R7C3-W2K8-F5N4",
+            "US9X-4K7M-2P8Q-6W3L-9R5T",
+            "VP3N-8H6C-5J2K-7F4B-1Z9Y",
+            "HD7W-2R9L-4X6P-8M3S-5K1V",
+            "TK5B-9Q4Z-7N2D-3H8C-6J4P",
+            "IG8M-3F6X-1W9T-5L2K-7R4N",
+            "FB4K-7P2S-9V6H-3C8J-2W5Q",
+            "YT6R-1Z5N-8D3M-4X9L-6B7P",
+            "MX2L-6W8F-3K7C-9S4V-1N5H",
+            "VIP1-9X4T-6B2R-8P5Z-3M7K",
+            "VIP2-5C8J-2W6N-9F4L-7X3S"
         ];
 
-        const DAILY_FREE_LIMIT = 5;
-        let currentUrl = "";
-        let isQualityBoosted = false;
-        let activePresets = Object.assign({}, DEFAULT_PRESETS);
-        let selectedPresetKey = "4k_ultra";
-        let mediaData = {
-            videoUrl: "",
-            hdUrl: "",
-            audioUrl: "",
-            title: ""
-        };
+        let toastTimer = null;
 
-        async function pasteFromClipboard() {
-            try {
-                if (navigator.clipboard && navigator.clipboard.readText) {
-                    const text = await navigator.clipboard.readText();
-                    if (text) {
-                        document.getElementById('videoUrl').value = text.trim();
-                        showToast("تم لصق الرابط من الحافظة");
-                        return;
-                    }
-                }
-            } catch (err) {}
-            showToast("يرجى لصق الرابط يدوياً في الحقل");
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            if (!toast) return;
+            toast.textContent = msg;
+            toast.classList.add("show");
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(function() {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+
+        function switchTab(tabName) {
+            ["home", "history", "vip"].forEach(function(name) {
+                const pane = document.getElementById("tab-" + name);
+                const nav = document.getElementById("nav-" + name);
+                if (pane) pane.classList.toggle("active", name === tabName);
+                if (nav) nav.classList.toggle("active", name === tabName);
+            });
+            if (tabName === "history") {
+                renderHistory();
+            }
         }
 
         function isVipActive() {
-            try {
-                const expiry = parseInt(localStorage.getItem('ultrasave_vip_expiry') || '0', 10);
-                return expiry > Date.now();
-            } catch (e) {
-                return false;
-            }
+            const expiry = parseInt(localStorage.getItem("ultrasave_vip_expiry") || "0", 10);
+            return expiry > Date.now();
         }
 
         function checkVipStatus() {
-            try {
-                const expiry = parseInt(localStorage.getItem('ultrasave_vip_expiry') || '0', 10);
-                const now = Date.now();
-                const badge = document.getElementById('headerVipBadge');
-                const badgeText = document.getElementById('badgeText');
-                const timerBox = document.getElementById('vipTimerBox');
-                const countdownEl = document.getElementById('vipCountdown');
-                const quotaEl = document.getElementById('quotaText');
+            const pill = document.getElementById("vipBadge");
+            const pillText = document.getElementById("vipBadgeText");
+            const statusText = document.getElementById("vipStatusText");
+            const expiryText = document.getElementById("vipExpiryText");
 
-                if (expiry > now) {
-                    if (badge) badge.classList.add('vip-active');
-                    if (badgeText) badgeText.textContent = "VIP مفعّل";
-                    if (timerBox) timerBox.style.display = "block";
+            const expiry = parseInt(localStorage.getItem("ultrasave_vip_expiry") || "0", 10);
+            const active = expiry > Date.now();
 
-                    const diff = expiry - now;
-                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                    const mins = Math.floor((diff / 1000 / 60) % 60);
-                    const secs = Math.floor((diff / 1000) % 60);
+            if (pill) pill.classList.toggle("active", active);
+            if (pillText) pillText.textContent = active ? "VIP مفعل" : "مجاني";
 
-                    if (countdownEl) {
-                        countdownEl.textContent = `${days}d : ${String(hours).padStart(2,'0')}h : ${String(mins).padStart(2,'0')}m : ${String(secs).padStart(2,'0')}s`;
-                    }
-                    if (quotaEl) {
-                        quotaEl.textContent = "غير محدود (VIP)";
-                        quotaEl.style.color = "var(--vip-gold)";
-                    }
+            if (statusText) {
+                statusText.textContent = active ? "الحالة الحالية: عضوية VIP مفعلة" : "الحالة الحالية: حساب مجاني";
+            }
+            if (expiryText) {
+                if (active) {
+                    const daysLeft = Math.max(1, Math.ceil((expiry - Date.now()) / (24 * 60 * 60 * 1000)));
+                    expiryText.textContent = `متبقي ${daysLeft} يوم`;
                 } else {
-                    if (badge) badge.classList.remove('vip-active');
-                    if (badgeText) badgeText.textContent = "مجاني";
-                    if (timerBox) timerBox.style.display = "none";
-                    updateQuotaDisplay();
+                    expiryText.textContent = "";
                 }
-            } catch (e) {}
+            }
+            updateQuotaDisplay();
         }
 
-        function checkDailyQuota() {
-            try {
-                const today = new Date().toDateString();
-                const savedDate = localStorage.getItem('ultrasave_quota_date');
-                if (savedDate !== today) {
-                    localStorage.setItem('ultrasave_quota_date', today);
-                    localStorage.setItem('ultrasave_quota_used', '0');
-                }
-            } catch (e) {}
+        function getTodayKey() {
+            const now = new Date();
+            return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+        }
+
+        function getDailyUsedCount() {
+            const savedDate = localStorage.getItem("ultrasave_quota_date");
+            const today = getTodayKey();
+            if (savedDate !== today) {
+                localStorage.setItem("ultrasave_quota_date", today);
+                localStorage.setItem("ultrasave_quota_used", "0");
+                return 0;
+            }
+            return parseInt(localStorage.getItem("ultrasave_quota_used") || "0", 10);
+        }
+
+        function incrementDailyUsedCount() {
+            const nextVal = getDailyUsedCount() + 1;
+            localStorage.setItem("ultrasave_quota_date", getTodayKey());
+            localStorage.setItem("ultrasave_quota_used", String(nextVal));
             updateQuotaDisplay();
         }
 
         function updateQuotaDisplay() {
-            if (isVipActive()) return;
-            try {
-                const used = parseInt(localStorage.getItem('ultrasave_quota_used') || '0', 10);
-                const left = Math.max(0, DAILY_FREE_LIMIT - used);
-                const quotaEl = document.getElementById('quotaText');
-                if (quotaEl) {
-                    quotaEl.textContent = `${left} / ${DAILY_FREE_LIMIT} محاولات`;
-                    quotaEl.style.color = left > 0 ? "var(--primary)" : "var(--danger)";
-                }
-            } catch (e) {}
-        }
-
-        function detectPlatformName(url) {
-            const u = String(url || '').toLowerCase();
-            if (u.includes('tiktok')) return 'TikTok';
-            if (u.includes('instagram')) return 'Instagram';
-            if (u.includes('facebook') || u.includes('fb.watch')) return 'Facebook';
-            if (u.includes('youtube') || u.includes('youtu.be')) return 'YouTube';
-            if (u.includes('twitter') || u.includes('x.com')) return 'منصة X';
-            return 'منصة تواصل اجتماعي';
-        }
-
-        function buildFilterFromPreset(preset) {
-            const contrast = preset.contrast || 1;
-            const saturate = preset.saturation || 1;
-            const brightness = preset.brightness || 1;
-            const sharpBoost = preset.sharpness ? Math.max(0, (preset.sharpness - 1) * 0.4) : 0;
-            return `contrast(${contrast + sharpBoost}) saturate(${saturate}) brightness(${brightness})`;
-        }
-
-        function formatPresetFeatures(preset) {
-            const tags = [];
-            if (preset.sharpness) tags.push(`حدة ${preset.sharpness}x`);
-            if (preset.saturation) tags.push(`ألوان ${preset.saturation}x`);
-            if (preset.denoise) tags.push("تقليل الضوضاء");
-            if (preset.hdr_boost) tags.push("HDR");
-            if (preset.smooth_motion) tags.push("حركة سلسة");
-            return tags.join(" • ") || "تحسين قياسي";
-        }
-
-        function renderQualityPresets() {
-            try {
-                const grid = document.getElementById('presetsGrid');
-                const keys = Object.keys(activePresets);
-                if (!grid || !keys.length) return;
-
-                if (!activePresets[selectedPresetKey]) {
-                    selectedPresetKey = keys[0];
-                }
-
-                grid.innerHTML = keys.map(function(key) {
-                    const p = activePresets[key];
-                    const isSelected = key === selectedPresetKey;
-                    return `<button type="button" class="preset-btn ${isSelected ? 'active' : ''}" onclick="selectPreset('${key}')">${p.label || key}</button>`;
-                }).join('');
-
-                const currentPreset = activePresets[selectedPresetKey];
-                const metaEl = document.getElementById('presetMetaText');
-                const badgeEl = document.getElementById('activePresetBadge');
-                if (metaEl) metaEl.textContent = `${currentPreset.label || selectedPresetKey}: ${formatPresetFeatures(currentPreset)}`;
-                if (badgeEl) badgeEl.textContent = isQualityBoosted ? (currentPreset.label || selectedPresetKey) : "HD";
-            } catch (e) {}
-        }
-
-        function selectPreset(key) {
-            selectedPresetKey = key;
-            renderQualityPresets();
-            if (isQualityBoosted) {
-                applyPresetToPlayer();
-                showToast(`تم التبديل إلى ${activePresets[key].label || key}`);
+            const quotaText = document.getElementById("quotaText");
+            if (!quotaText) return;
+            if (isVipActive()) {
+                quotaText.textContent = "الحد اليومي: غير محدود (VIP)";
+            } else {
+                const used = getDailyUsedCount();
+                quotaText.textContent = `الحد المجاني اليومي: ${used} / ${DAILY_FREE_LIMIT}`;
             }
         }
 
-        function applyPresetToPlayer() {
-            const player = document.getElementById('cleanVideoPlayer');
-            const badge = document.getElementById('qualityBadge');
-            const btn = document.getElementById('boost4kBtn');
-            const text = document.getElementById('boost4kText');
-            const preset = activePresets[selectedPresetKey] || DEFAULT_PRESETS["4k_ultra"];
-
-            if (player) player.style.filter = buildFilterFromPreset(preset);
-            if (btn) btn.classList.add('active-4k');
-            if (text) text.textContent = `مفعّل: ${preset.label || selectedPresetKey} (إلغاء)`;
-            if (badge) badge.textContent = (preset.label || "4K").toUpperCase();
-            const activeBadge = document.getElementById('activePresetBadge');
-            if (activeBadge) activeBadge.textContent = preset.label || selectedPresetKey;
+        function saveQualityPreset() {
+            const select = document.getElementById("qualityPreset");
+            const labelEl = document.getElementById("activePresetText");
+            if (!select) return;
+            const val = select.value;
+            localStorage.setItem("ultrasave_quality_preset", val);
+            const selectedOption = select.options[select.selectedIndex];
+            if (labelEl && selectedOption) {
+                labelEl.textContent = `الوضع: ${selectedOption.textContent}`;
+            }
         }
 
-        function resetQualityState() {
-            isQualityBoosted = false;
-            const player = document.getElementById('cleanVideoPlayer');
-            const btn = document.getElementById('boost4kBtn');
-            const text = document.getElementById('boost4kText');
-            const badge = document.getElementById('qualityBadge');
+        function applyRemoteQualitySettings(qualitySettings) {
+            if (!qualitySettings || !qualitySettings.enabled || !qualitySettings.presets) return;
+            const select = document.getElementById("qualityPreset");
+            if (!select) return;
 
-            if (player) player.style.filter = "none";
-            if (btn) btn.classList.remove('active-4k');
-            const preset = activePresets[selectedPresetKey] || DEFAULT_PRESETS["4k_ultra"];
-            if (text) text.textContent = `تفعيل ${preset.label || "رفع الدقة"}`;
-            if (badge) badge.textContent = "HD";
-            const activeBadge = document.getElementById('activePresetBadge');
-            if (activeBadge) activeBadge.textContent = "HD";
+            const savedPreset = localStorage.getItem("ultrasave_quality_preset");
+            const preferred = savedPreset || qualitySettings.default_preset;
+            if (preferred && select.querySelector(`option[value="${preferred}"]`)) {
+                select.value = preferred;
+                saveQualityPreset();
+            }
         }
 
-        function toggleQualityBoost() {
-            if (!isVipActive()) {
-                showToast("رفع الدقة متاح لأعضاء VIP؛ استرد كود VIP أولاً");
-                switchTab('vip');
+        function renderRemoteAnnouncement(announcement) {
+            const banner = document.getElementById("announcementBanner");
+            if (!banner) return;
+            if (announcement && announcement.enabled && announcement.text) {
+                banner.textContent = announcement.text;
+                banner.style.display = "block";
+            } else {
+                banner.textContent = "";
+                banner.style.display = "none";
+            }
+        }
+
+        async function fetchRemoteConfigData() {
+            const res = await fetch(`${REMOTE_CONFIG_URL}?cb=${Date.now()}&r=${Math.random()}`, {
+                cache: "no-store"
+            });
+            if (!res.ok) throw new Error("HTTP_" + res.status);
+            return await res.json();
+        }
+
+        async function syncExtraCodesNow() {
+            try {
+                const cfg = await fetchRemoteConfigData();
+                if (Array.isArray(cfg.extra_codes)) {
+                    cfg.extra_codes.forEach(function(c) {
+                        const clean = String(c).trim().toUpperCase();
+                        if (clean && !MASTER_REDEEM_CODES.includes(clean)) {
+                            MASTER_REDEEM_CODES.push(clean);
+                        }
+                    });
+                }
+            } catch (_) {}
+        }
+
+        async function checkRemoteConfig(notifyOnSync) {
+            try {
+                const cfg = await fetchRemoteConfigData();
+                let addedCount = 0;
+
+                if (Array.isArray(cfg.extra_codes)) {
+                    cfg.extra_codes.forEach(function(c) {
+                        const clean = String(c).trim().toUpperCase();
+                        if (clean && !MASTER_REDEEM_CODES.includes(clean)) {
+                            MASTER_REDEEM_CODES.push(clean);
+                            addedCount++;
+                        }
+                    });
+                }
+
+                applyRemoteQualitySettings(cfg.quality_settings);
+                renderRemoteAnnouncement(cfg.announcement);
+
+                if (notifyOnSync) {
+                    if (addedCount > 0) {
+                        showToast(`تمت المزامنة وإضافة ${addedCount} كود VIP جديد`);
+                    } else {
+                        showToast("تمت مزامنة الإعدادات والأكواد بنجاح");
+                    }
+                }
+            } catch (_) {
+                if (notifyOnSync) {
+                    showToast("تعذر تحديث البيانات حالياً");
+                }
+            }
+        }
+
+        async function manualSilentSync() {
+            const btn = document.getElementById("syncBtn");
+            if (btn) btn.classList.add("spinning");
+            try {
+                await checkRemoteConfig(true);
+            } finally {
+                if (btn) btn.classList.remove("spinning");
+            }
+        }
+
+        function sanitizeCodeKey(code) {
+            return String(code || "").trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "_");
+        }
+
+        async function isCodeAlreadyRedeemedGlobally(code) {
+            if (!FIREBASE_DB_URL) return false;
+            const key = sanitizeCodeKey(code);
+            const url = `${FIREBASE_DB_URL.replace(/\/+$/, "")}/redeemed_codes/${key}.json`;
+            const res = await fetch(url, { cache: "no-store" });
+            if (!res.ok) throw new Error("FIREBASE_READ_ERR");
+            const data = await res.json();
+            return Boolean(data);
+        }
+
+        async function claimCodeGlobally(code) {
+            if (!FIREBASE_DB_URL) return true;
+            const key = sanitizeCodeKey(code);
+            const url = `${FIREBASE_DB_URL.replace(/\/+$/, "")}/redeemed_codes/${key}.json`;
+            const res = await fetch(url, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    code: code,
+                    redeemedAt: Date.now(),
+                    appVersion: APP_VERSION
+                })
+            });
+            if (!res.ok) throw new Error("FIREBASE_WRITE_ERR");
+            return true;
+        }
+
+        async function redeemVipCode() {
+            const input = document.getElementById("vipCodeInput");
+            const redeemBtn = document.getElementById("redeemBtn");
+            const code = input ? input.value.trim().toUpperCase() : "";
+
+            if (!code) {
+                showToast("أدخل كود الاسترداد أولاً");
                 return;
             }
 
-            isQualityBoosted = !isQualityBoosted;
-            if (isQualityBoosted) {
-                applyPresetToPlayer();
-                const preset = activePresets[selectedPresetKey] || DEFAULT_PRESETS["4k_ultra"];
-                showToast(`تم تفعيل ${preset.label || "رفع الدقة"}!`);
-            } else {
-                resetQualityState();
-                showToast("تمت العودة إلى دقة HD");
+            if (redeemBtn) {
+                redeemBtn.disabled = true;
+                redeemBtn.textContent = "جاري التحقق من الكود...";
+            }
+
+            if (!MASTER_REDEEM_CODES.includes(code)) {
+                await syncExtraCodesNow();
+            }
+
+            if (!MASTER_REDEEM_CODES.includes(code)) {
+                if (redeemBtn) {
+                    redeemBtn.disabled = false;
+                    redeemBtn.textContent = "استرداد الكود الآن";
+                }
+                showToast("كود الاسترداد غير صحيح!");
+                return;
+            }
+
+            let localUsed = [];
+            try {
+                localUsed = JSON.parse(localStorage.getItem("ultrasave_redeemed_codes") || "[]");
+            } catch (e) {}
+
+            if (localUsed.includes(code)) {
+                if (redeemBtn) {
+                    redeemBtn.disabled = false;
+                    redeemBtn.textContent = "استرداد الكود الآن";
+                }
+                showToast("هذا الكود مستخدم مسبقاً ولا يمكن استخدامه مرة أخرى");
+                return;
+            }
+
+            if (redeemBtn) {
+                redeemBtn.textContent = "جاري قفل الكود في قاعدة البيانات...";
+            }
+
+            try {
+                const takenGlobally = await isCodeAlreadyRedeemedGlobally(code);
+                if (takenGlobally) {
+                    localUsed.push(code);
+                    try { localStorage.setItem("ultrasave_redeemed_codes", JSON.stringify(localUsed)); } catch (e) {}
+                    showToast("هذا الكود تم استخدامه من شخص آخر مسبقاً!");
+                    return;
+                }
+
+                await claimCodeGlobally(code);
+
+                localUsed.push(code);
+                const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+                const currentExpiry = parseInt(localStorage.getItem("ultrasave_vip_expiry") || "0", 10);
+                const newExpiry = Math.max(Date.now(), currentExpiry) + thirtyDaysMs;
+
+                try {
+                    localStorage.setItem("ultrasave_redeemed_codes", JSON.stringify(localUsed));
+                    localStorage.setItem("ultrasave_vip_expiry", String(newExpiry));
+                } catch (e) {}
+
+                if (input) input.value = "";
+                checkVipStatus();
+                showToast("تم استرداد الكود وقفلُه لمرة واحدة وتفعيل VIP لمدة 30 يوماً!");
+            } catch (err) {
+                showToast("تأكد من اتصال الإنترنت لإتمام التحقق من الكود");
+            } finally {
+                if (redeemBtn) {
+                    redeemBtn.disabled = false;
+                    redeemBtn.textContent = "استرداد الكود الآن";
+                }
             }
         }
 
-        async function fetchCleanMedia(url) {
+        function saveToHistory(item) {
+            let list = [];
+            try {
+                list = JSON.parse(localStorage.getItem("ultrasave_history") || "[]");
+            } catch (e) {}
+            list.unshift({
+                title: item.title || "فيديو محضر للتحميل",
+                videoUrl: item.videoUrl || "",
+                audioUrl: item.audioUrl || "",
+                date: new Date().toLocaleString("ar-IQ")
+            });
+            list = list.slice(0, 30);
+            try {
+                localStorage.setItem("ultrasave_history", JSON.stringify(list));
+            } catch (e) {}
+        }
+
+        function renderHistory() {
+            const container = document.getElementById("historyList");
+            if (!container) return;
+            let list = [];
+            try {
+                list = JSON.parse(localStorage.getItem("ultrasave_history") || "[]");
+            } catch (e) {}
+
+            if (!list.length) {
+                container.innerHTML = `<p class="card-desc">لا توجد عناصر في سجل التحميلات حتى الآن.</p>`;
+                return;
+            }
+
+            container.innerHTML = list.map(function(item) {
+                const safeLink = item.videoUrl || item.audioUrl || "#";
+                return `
+                    <div class="history-item">
+                        <div>
+                            <div class="history-title">${escapeHtml(item.title)}</div>
+                            <div class="history-meta">${escapeHtml(item.date)}</div>
+                        </div>
+                        <a class="small-link-btn" href="${escapeAttribute(safeLink)}" target="_blank" rel="noopener noreferrer">فتح الرابط</a>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function escapeHtml(str) {
+            return String(str || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        function escapeAttribute(url) {
+            const trimmed = String(url || "").trim();
+            if (/^https?:\/\//i.test(trimmed)) return escapeHtml(trimmed);
+            return "#";
+        }
+
+        async function extractMediaFromUrl(url) {
             const cleanUrl = String(url || "").trim();
             const lowerUrl = cleanUrl.toLowerCase();
 
             if (lowerUrl.includes("tiktok")) {
                 try {
-                    const res = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(cleanUrl)}&_t=${Date.now()}`, { cache: "no-store" });
+                    const res = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(cleanUrl)}&hd=1&t=${Date.now()}`, {
+                        cache: "no-store"
+                    });
                     const json = await res.json();
                     if (json && json.code === 0 && json.data) {
                         return {
-                            videoUrl: json.data.play || json.data.wmplay || "",
-                            hdUrl: json.data.hdplay || json.data.play || "",
+                            videoUrl: json.data.hdplay || json.data.play || json.data.wmplay || "",
                             audioUrl: json.data.music || "",
                             title: json.data.title || "فيديو تيك توك بدون علامة مائية"
                         };
@@ -1198,7 +1010,7 @@
 
             for (const endpoint of endpoints) {
                 try {
-                    const cobaltRes = await fetch(endpoint, {
+                    const res = await fetch(endpoint, {
                         method: "POST",
                         headers: {
                             "Accept": "application/json",
@@ -1209,23 +1021,21 @@
                             videoQuality: "1080"
                         })
                     });
-
-                    if (cobaltRes.ok) {
-                        const cData = await cobaltRes.json();
-                        const extractedUrl = cData.url || (Array.isArray(cData.picker) && cData.picker[0] && cData.picker[0].url) || "";
-                        if (extractedUrl) {
+                    if (res.ok) {
+                        const data = await res.json();
+                        const extracted = data.url || (Array.isArray(data.picker) && data.picker[0] && data.picker[0].url) || "";
+                        if (extracted) {
                             return {
-                                videoUrl: extractedUrl,
-                                hdUrl: extractedUrl,
-                                audioUrl: cData.audio || "",
-                                title: "فيديو جاهز بدون علامة مائية"
+                                videoUrl: extracted,
+                                audioUrl: data.audio || "",
+                                title: data.filename || "فيديو جاهز للتحميل"
                             };
                         }
                     }
                 } catch (_) {}
             }
 
-            throw new Error("تعذر استخراج الفيديو حالياً");
+            throw new Error("EXTRACT_FAILED");
         }
 
         async function processVideoLink() {
@@ -1244,21 +1054,76 @@
             }
 
             if (!isVipActive()) {
-                const used = parseInt(localStorage.getItem("ultrasave_quota_used") || "0", 10);
+                const used = getDailyUsedCount();
                 if (used >= DAILY_FREE_LIMIT) {
-                    showToast("انتهى الحد اليومي! استرد كود VIP للمواصلة");
+                    showToast("انتهى الحد اليومي المجاني! فعّل VIP لاستمرار التحميل");
                     switchTab("vip");
                     return;
                 }
             }
 
+            const btn = document.getElementById("processBtn");
             const btnLoader = document.getElementById("btnLoader");
             const btnIcon = document.getElementById("btnIcon");
             const btnText = document.getElementById("btnText");
             const resultBox = document.getElementById("resultBox");
             const videoPlayer = document.getElementById("cleanVideoPlayer");
+            const titleEl = document.getElementById("videoTitleText");
+            const dlVideo = document.getElementById("downloadVideoLink");
+            const dlAudio = document.getElementById("downloadAudioLink");
 
-            if (btnLoader) btnLoader.style.display = "inline-block";
+            if (btn) btn.disabled = true;
+            if (btnLoader) btnLoader.classList.add("show");
             if (btnIcon) btnIcon.style.display = "none";
-            if (btnText) btnText.textContent = "جاري إزالة العلامة المائية وتجهيز الفيديو...";
-            if (resultBox) resultBox.sty
+            if (btnText) btnText.textContent = "جاري تجهيز الفيديو...";
+
+            try {
+                const media = await extractMediaFromUrl(rawUrl);
+
+                if (videoPlayer && media.videoUrl) {
+                    videoPlayer.src = media.videoUrl;
+                }
+                if (titleEl) {
+                    titleEl.textContent = media.title;
+                }
+                if (dlVideo) {
+                    dlVideo.href = media.videoUrl || "#";
+                    dlVideo.style.display = media.videoUrl ? "inline-flex" : "none";
+                }
+                if (dlAudio) {
+                    dlAudio.href = media.audioUrl || media.videoUrl || "#";
+                    dlAudio.style.display = (media.audioUrl || media.videoUrl) ? "inline-flex" : "none";
+                }
+                if (resultBox) {
+                    resultBox.style.display = "block";
+                }
+
+                if (!isVipActive()) {
+                    incrementDailyUsedCount();
+                }
+
+                saveToHistory(media);
+                showToast("تم تجهيز الفيديو بنجاح");
+            } catch (_) {
+                showToast("تعذر استخراج الفيديو حالياً، تأكد من صحة الرابط");
+            } finally {
+                if (btn) btn.disabled = false;
+                if (btnLoader) btnLoader.classList.remove("show");
+                if (btnIcon) btnIcon.style.display = "inline-flex";
+                if (btnText) btnText.textContent = "تجهيز الفيديو الآن";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const savedPreset = localStorage.getItem("ultrasave_quality_preset");
+            const select = document.getElementById("qualityPreset");
+            if (savedPreset && select && select.querySelector(`option[value="${savedPreset}"]`)) {
+                select.value = savedPreset;
+            }
+            saveQualityPreset();
+            checkVipStatus();
+            checkRemoteConfig(false);
+        });
+    </script>
+</body>
+</html>
