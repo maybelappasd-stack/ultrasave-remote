@@ -6,7 +6,7 @@
   "direct_download": true,
   "open_external_browser": false,
   "apk_url": "https://raw.githubusercontent.com/maybelappasd-stack/ultrasave-remote/main/UltraSave-1.1.apk",
-  "update_notes": "تحديث صامت وفوري للإعدادات وأكواد VIP بدون إجبار أو نافذة منبثقة.",
+  "update_notes": "مزامنة صامتة وفورية للإعدادات وأكواد VIP بدون تحديث إجباري أو نافذة منبثقة.",
   "new_features": [
     "مزامنة فورية تلقائية عند الدخول بدون أي نافذة",
     "تحديث أوضاع رفع الدقة والأكواد تلقائياً",
