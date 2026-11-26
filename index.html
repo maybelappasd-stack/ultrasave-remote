@@ -213,6 +213,56 @@
             transform: scale(0.98);
         }
 
+        .quality-panel {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .quality-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--vip-gold);
+        }
+
+        .presets-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .preset-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 9px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+        }
+
+        .preset-btn.active {
+            background: rgba(255, 179, 0, 0.16);
+            border-color: var(--vip-gold);
+            color: var(--vip-gold);
+        }
+
+        .preset-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
         .btn-4k {
             width: 100%;
             background: linear-gradient(135deg, #ffd54f, #ff8f00);
@@ -313,10 +363,6 @@
             display: block;
             background: #05070c;
             transition: filter 0.3s ease;
-        }
-
-        .video-player-frame video.boost-4k {
-            filter: contrast(1.08) saturate(1.14) brightness(1.03);
         }
 
         .video-status-bar {
@@ -646,11 +692,20 @@
                         <video id="cleanVideoPlayer" controls playsinline preload="metadata"></video>
                     </div>
 
-                    <button id="boost4kBtn" class="btn-4k" onclick="toggle4kQuality()">
+                    <div class="quality-panel">
+                        <div class="quality-panel-header">
+                            <span>أوضاع رفع الدقة (من GitHub)</span>
+                            <span id="activePresetBadge">HD</span>
+                        </div>
+                        <div id="presetsGrid" class="presets-grid"></div>
+                        <div id="presetMetaText" class="preset-meta">اختر وضعاً لرفع الدقة وتحسين الصورة قبل الحفظ.</div>
+                    </div>
+
+                    <button id="boost4kBtn" class="btn-4k" onclick="toggleQualityBoost()">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
                         </svg>
-                        <span id="boost4kText">رفع الدقة إلى 4K Ultra</span>
+                        <span id="boost4kText">تفعيل رفع الدقة المختار</span>
                     </button>
 
                     <button class="btn-save-gallery" onclick="saveToGallery()">
@@ -712,7 +767,7 @@
                     </li>
                     <li>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="#2ed573"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                        رفع الدقة 4K وحفظ في المعرض والصوت MP3
+                        رفع الدقة المتعددة وحفظ في المعرض والصوت MP3
                     </li>
                 </ul>
 
@@ -759,6 +814,44 @@
         const REMOTE_CONFIG_URL = "https://raw.githubusercontent.com/maybelappasd-stack/ultrasave-remote/refs/heads/main/ultrasave-config.json";
         const FIREBASE_DB_URL = "https://snapfree-2a562-default-rtdb.firebaseio.com";
 
+        const DEFAULT_PRESETS = {
+            fhd_clean: {
+                label: "1080p FHD Clean",
+                sharpness: 1.04,
+                contrast: 1.03,
+                saturation: 1.05,
+                brightness: 1.01,
+                denoise: true
+            },
+            qhd_2k: {
+                label: "2K QHD Pro",
+                sharpness: 1.1,
+                contrast: 1.06,
+                saturation: 1.1,
+                brightness: 1.02,
+                denoise: true
+            },
+            "4k_ultra": {
+                label: "4K Ultra HD",
+                sharpness: 1.18,
+                contrast: 1.1,
+                saturation: 1.16,
+                brightness: 1.03,
+                denoise: true,
+                hdr_boost: true
+            },
+            "8k_master": {
+                label: "8K Master HDR",
+                sharpness: 1.25,
+                contrast: 1.14,
+                saturation: 1.22,
+                brightness: 1.04,
+                denoise: true,
+                hdr_boost: true,
+                smooth_motion: true
+            }
+        };
+
         const MASTER_REDEEM_CODES = [
             "A7K9-M3P8-Q2L6-W5X4-Z1N8", "B4R2-T8V6-C5J9-F3H7-Y2D6", "C9L5-N1W7-K6P3-S8M4-X7G2",
             "D3X8-H6B2-V9T4-L1Q5-J8R3", "E6P1-Z4M9-R7C3-W2K8-F5N4", "F8W3-J5S1-N2D7-H9L6-Q4V8",
@@ -798,7 +891,9 @@
 
         const DAILY_FREE_LIMIT = 5;
         let currentUrl = "";
-        let is4kBoosted = false;
+        let isQualityBoosted = false;
+        let activePresets = { ...DEFAULT_PRESETS };
+        let selectedPresetKey = "4k_ultra";
         let mediaData = {
             videoUrl: "",
             hdUrl: "",
@@ -810,6 +905,7 @@
             checkDailyQuota();
             checkVipStatus();
             renderHistory();
+            renderQualityPresets();
             checkRemoteConfig();
             setInterval(checkVipStatus, 1000);
         };
@@ -906,40 +1002,96 @@
             return 'منصة تواصل اجتماعي';
         }
 
-        function reset4kState() {
-            is4kBoosted = false;
+        function buildFilterFromPreset(preset) {
+            const contrast = preset.contrast || 1;
+            const saturate = preset.saturation || 1;
+            const brightness = preset.brightness || 1;
+            const sharpBoost = preset.sharpness ? Math.max(0, (preset.sharpness - 1) * 0.4) : 0;
+            return `contrast(${contrast + sharpBoost}) saturate(${saturate}) brightness(${brightness})`;
+        }
+
+        function formatPresetFeatures(preset) {
+            const tags = [];
+            if (preset.sharpness) tags.push(`حدة ${preset.sharpness}x`);
+            if (preset.saturation) tags.push(`ألوان ${preset.saturation}x`);
+            if (preset.denoise) tags.push("تقليل الضوضاء");
+            if (preset.hdr_boost) tags.push("HDR");
+            if (preset.smooth_motion) tags.push("حركة سلسة");
+            return tags.join(" • ") || "تحسين قياسي";
+        }
+
+        function renderQualityPresets() {
+            const grid = document.getElementById('presetsGrid');
+            const keys = Object.keys(activePresets);
+            if (!keys.length) return;
+
+            if (!activePresets[selectedPresetKey]) {
+                selectedPresetKey = keys[0];
+            }
+
+            grid.innerHTML = keys.map(key => {
+                const p = activePresets[key];
+                const isSelected = key === selectedPresetKey;
+                return `<button type="button" class="preset-btn ${isSelected ? 'active' : ''}" onclick="selectPreset('${key}')">${p.label || key}</button>`;
+            }).join('');
+
+            const currentPreset = activePresets[selectedPresetKey];
+            document.getElementById('presetMetaText').textContent = `${currentPreset.label || selectedPresetKey}: ${formatPresetFeatures(currentPreset)}`;
+            document.getElementById('activePresetBadge').textContent = isQualityBoosted ? (currentPreset.label || selectedPresetKey) : "HD";
+        }
+
+        function selectPreset(key) {
+            selectedPresetKey = key;
+            renderQualityPresets();
+            if (isQualityBoosted) {
+                applyPresetToPlayer();
+                showToast(`تم التبديل إلى ${activePresets[key].label || key}`);
+            }
+        }
+
+        function applyPresetToPlayer() {
+            const player = document.getElementById('cleanVideoPlayer');
+            const badge = document.getElementById('qualityBadge');
+            const btn = document.getElementById('boost4kBtn');
+            const text = document.getElementById('boost4kText');
+            const preset = activePresets[selectedPresetKey] || DEFAULT_PRESETS["4k_ultra"];
+
+            player.style.filter = buildFilterFromPreset(preset);
+            btn.classList.add('active-4k');
+            text.textContent = `مفعّل: ${preset.label || selectedPresetKey} (إلغاء)`;
+            badge.textContent = (preset.label || "4K").toUpperCase();
+            document.getElementById('activePresetBadge').textContent = preset.label || selectedPresetKey;
+        }
+
+        function resetQualityState() {
+            isQualityBoosted = false;
             const player = document.getElementById('cleanVideoPlayer');
             const btn = document.getElementById('boost4kBtn');
             const text = document.getElementById('boost4kText');
             const badge = document.getElementById('qualityBadge');
 
-            player.classList.remove('boost-4k');
+            player.style.filter = "none";
             btn.classList.remove('active-4k');
-            text.textContent = "رفع الدقة إلى 4K Ultra";
+            const preset = activePresets[selectedPresetKey] || DEFAULT_PRESETS["4k_ultra"];
+            text.textContent = `تفعيل ${preset.label || "رفع الدقة"}`;
             badge.textContent = "HD";
+            document.getElementById('activePresetBadge').textContent = "HD";
         }
 
-        function toggle4kQuality() {
+        function toggleQualityBoost() {
             if (!isVipActive()) {
-                showToast("رفع الدقة إلى 4K متاح لأعضاء VIP؛ استرد كود VIP أولاً");
+                showToast("رفع الدقة متاح لأعضاء VIP؛ استرد كود VIP أولاً");
                 switchTab('vip');
                 return;
             }
 
-            is4kBoosted = !is4kBoosted;
-            const player = document.getElementById('cleanVideoPlayer');
-            const btn = document.getElementById('boost4kBtn');
-            const text = document.getElementById('boost4kText');
-            const badge = document.getElementById('qualityBadge');
-
-            if (is4kBoosted) {
-                player.classList.add('boost-4k');
-                btn.classList.add('active-4k');
-                text.textContent = "تم تفعيل وضع 4K Ultra (إلغاء)";
-                badge.textContent = "4K ULTRA";
-                showToast("تم رفع دقة العرض إلى 4K Ultra!");
+            isQualityBoosted = !isQualityBoosted;
+            if (isQualityBoosted) {
+                applyPresetToPlayer();
+                const preset = activePresets[selectedPresetKey] || DEFAULT_PRESETS["4k_ultra"];
+                showToast(`تم تفعيل ${preset.label || "رفع الدقة"}!`);
             } else {
-                reset4kState();
+                resetQualityState();
                 showToast("تمت العودة إلى دقة HD");
             }
         }
@@ -1019,7 +1171,7 @@
             btnIcon.style.display = 'none';
             btnText.textContent = 'جاري إزالة العلامة المائية وتجهيز الفيديو...';
             resultBox.style.display = 'none';
-            reset4kState();
+            resetQualityState();
 
             try {
                 const fetched = await fetchCleanMedia(urlInput);
@@ -1060,26 +1212,27 @@
         }
 
         function saveToGallery() {
-            const targetLink = (is4kBoosted && mediaData.hdUrl) ? mediaData.hdUrl : mediaData.videoUrl;
+            const targetLink = (isQualityBoosted && mediaData.hdUrl) ? mediaData.hdUrl : mediaData.videoUrl;
             if (!targetLink) {
                 showToast("لا يوجد فيديو جاهز للحفظ");
                 return;
             }
 
-            const qualityTag = is4kBoosted ? "4K_Ultra" : "Gallery";
-            const qualityLabel = is4kBoosted ? "حفظ في المعرض (4K Ultra)" : "حفظ في المعرض";
+            const preset = activePresets[selectedPresetKey] || DEFAULT_PRESETS["4k_ultra"];
+            const modeName = isQualityBoosted ? (preset.label || selectedPresetKey) : "HD";
+            const fileTag = modeName.replace(/[^A-Za-z0-9]/g, '_');
 
             const anchor = document.createElement('a');
             anchor.href = targetLink;
-            anchor.download = `UltraSave_${qualityTag}_${Date.now()}.mp4`;
+            anchor.download = `UltraSave_${fileTag}_${Date.now()}.mp4`;
             anchor.target = '_blank';
             anchor.rel = 'noopener noreferrer';
             document.body.appendChild(anchor);
             anchor.click();
             document.body.removeChild(anchor);
 
-            saveToHistory(currentUrl, qualityLabel);
-            showToast(`جاري حفظ الفيديو إلى جهازك (${is4kBoosted ? "4K Ultra" : "HD"})...`);
+            saveToHistory(currentUrl, `حفظ في المعرض (${modeName})`);
+            showToast(`جاري حفظ الفيديو إلى جهازك (${modeName})...`);
         }
 
         function triggerDownload(type, label, requiresVip) {
@@ -1123,197 +1276,4 @@
             const history = JSON.parse(localStorage.getItem('ultrasave_history') || '[]');
             history.unshift({
                 url: url,
-                quality: quality,
-                platform: detectPlatformName(url),
-                date: new Date().toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' })
-            });
-            localStorage.setItem('ultrasave_history', JSON.stringify(history.slice(0, 25)));
-            renderHistory();
-        }
-
-        function renderHistory() {
-            const container = document.getElementById('historyContainer');
-            const history = JSON.parse(localStorage.getItem('ultrasave_history') || '[]');
-
-            if (history.length === 0) {
-                container.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:13px; padding:25px 0;">لا توجد تحميلات محفوظة بعد</p>`;
-                return;
-            }
-
-            container.innerHTML = history.map(item => `
-                <div class="history-item">
-                    <div class="history-info">
-                        <p>${item.url}</p>
-                        <span>${item.platform} • ${item.quality} • ${item.date}</span>
-                    </div>
-                    <button onclick="copySavedLink('${item.url}')" style="background:var(--bg-card); border:1px solid var(--border); color:var(--primary); padding:7px 10px; border-radius:8px; font-size:11px; cursor:pointer; flex-shrink:0;">
-                        نسخ
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        function copySavedLink(url) {
-            navigator.clipboard.writeText(url);
-            showToast("تم نسخ الرابط");
-        }
-
-        function clearHistory() {
-            localStorage.removeItem('ultrasave_history');
-            renderHistory();
-            showToast("تم مسح السجل");
-        }
-
-        function sanitizeCodeKey(code) {
-            return code.replace(/[^A-Z0-9]/g, '');
-        }
-
-        async function isCodeAlreadyRedeemedGlobally(code) {
-            const safeKey = sanitizeCodeKey(code);
-            const res = await fetch(`${FIREBASE_DB_URL}/ultrasave_redeemed_codes/${safeKey}.json`);
-            if (!res.ok) throw new Error("تعذر الاتصال بقاعدة البيانات");
-            const data = await res.json();
-            return Boolean(data);
-        }
-
-        async function claimCodeGlobally(code) {
-            const safeKey = sanitizeCodeKey(code);
-            const payload = {
-                code: code,
-                redeemedAt: Date.now()
-            };
-            const res = await fetch(`${FIREBASE_DB_URL}/ultrasave_redeemed_codes/${safeKey}.json`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-            if (!res.ok) throw new Error("فشل تسجيل استخدام الكود");
-        }
-
-        async function redeemVipCode() {
-            const input = document.getElementById('vipCodeInput');
-            const redeemBtn = document.getElementById('redeemBtn');
-            const code = input.value.trim().toUpperCase();
-
-            if (!code) {
-                showToast("أدخل كود الاسترداد أولاً");
-                return;
-            }
-
-            if (!MASTER_REDEEM_CODES.includes(code)) {
-                showToast("كود الاسترداد غير صحيح!");
-                return;
-            }
-
-            const localUsed = JSON.parse(localStorage.getItem('ultrasave_redeemed_codes') || '[]');
-            if (localUsed.includes(code)) {
-                showToast("هذا الكود مستخدم مسبقاً ولا يمكن استخدامه مرة أخرى");
-                return;
-            }
-
-            redeemBtn.disabled = true;
-            redeemBtn.textContent = "جاري التحقق وقفل الكود...";
-
-            try {
-                const takenGlobally = await isCodeAlreadyRedeemedGlobally(code);
-                if (takenGlobally) {
-                    localUsed.push(code);
-                    localStorage.setItem('ultrasave_redeemed_codes', JSON.stringify(localUsed));
-                    showToast("هذا الكود تم استخدامه من شخص آخر مسبقاً!");
-                    return;
-                }
-
-                await claimCodeGlobally(code);
-
-                localUsed.push(code);
-                localStorage.setItem('ultrasave_redeemed_codes', JSON.stringify(localUsed));
-
-                const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
-                const currentExpiry = parseInt(localStorage.getItem('ultrasave_vip_expiry') || '0', 10);
-                const newExpiry = Math.max(Date.now(), currentExpiry) + thirtyDaysMs;
-                localStorage.setItem('ultrasave_vip_expiry', String(newExpiry));
-
-                input.value = '';
-                checkVipStatus();
-                showToast("تم استرداد الكود وقفلُه لمرة واحدة وتفعيل VIP لمدة 30 يوماً!");
-            } catch (err) {
-                showToast("تأكد من اتصال الإنترنت لإتمام التحقق من الكود");
-            } finally {
-                redeemBtn.disabled = false;
-                redeemBtn.textContent = "استرداد الكود الآن";
-            }
-        }
-
-        function compareVersions(remoteVer, localVer) {
-            const r = String(remoteVer || "1.0").split(".").map(Number);
-            const l = String(localVer || "1.0").split(".").map(Number);
-            for (let i = 0; i < Math.max(r.length, l.length); i++) {
-                const numR = r[i] || 0;
-                const numL = l[i] || 0;
-                if (numR > numL) return true;
-                if (numR < numL) return false;
-            }
-            return false;
-        }
-
-        function renderRemoteAnnouncement(announcement) {
-            if (!announcement || !announcement.enabled || !announcement.text) return;
-            const container = document.querySelector(".container");
-            if (!container || document.getElementById("remoteAnnouncementBox")) return;
-
-            const box = document.createElement("div");
-            box.id = "remoteAnnouncementBox";
-            box.style.cssText = "background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.35);color:#f4f6fb;padding:12px 14px;border-radius:14px;font-size:12px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;";
-            box.innerHTML = `<span>${announcement.text}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;color:#8b95b0;font-size:14px;cursor:pointer;">X</button>`;
-            container.prepend(box);
-        }
-
-        function showUpdateModal(cfg) {
-            if (document.getElementById("remoteUpdateModal")) return;
-
-            const modal = document.createElement("div");
-            modal.id = "remoteUpdateModal";
-            modal.style.cssText = "position:fixed;inset:0;background:rgba(5,8,15,0.85);backdrop-filter:blur(6px);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;";
-
-            const cancelBtnHtml = cfg.force_update
-                ? ""
-                : `<button onclick="document.getElementById('remoteUpdateModal').remove()" style="flex:1;background:#1a2030;color:#8b95b0;border:1px solid #232b40;padding:12px;border-radius:12px;font-weight:700;cursor:pointer;">لاحقاً</button>`;
-
-            modal.innerHTML = `
-                <div style="background:#121622;border:1px solid #232b40;border-radius:18px;padding:20px;max-width:400px;width:100%;text-align:right;">
-                    <h3 style="color:#00e5ff;font-size:17px;margin-bottom:8px;">يتوفر تحديث جديد (${cfg.latest_version})</h3>
-                    <p style="color:#8b95b0;font-size:13px;line-height:1.6;margin-bottom:16px;">${cfg.update_notes || "تحسينات جديدة وإصلاحات للتطبيق."}</p>
-                    <div style="display:flex;gap:10px;">
-                        <a href="${cfg.apk_url || "https://t.me/beschainat"}" target="_blank" style="flex:1;text-align:center;text-decoration:none;background:linear-gradient(135deg,#00e5ff,#0088ff);color:#05080f;padding:12px;border-radius:12px;font-weight:800;font-size:13px;">تحميل التحديث</a>
-                        ${cancelBtnHtml}
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        }
-
-        async function checkRemoteConfig() {
-            try {
-                const res = await fetch(`${REMOTE_CONFIG_URL}?t=${Date.now()}`, { cache: "no-store" });
-                if (!res.ok) return;
-                const cfg = await res.json();
-
-                if (Array.isArray(cfg.extra_codes)) {
-                    cfg.extra_codes.forEach(c => {
-                        const clean = String(c).trim().toUpperCase();
-                        if (clean && !MASTER_REDEEM_CODES.includes(clean)) {
-                            MASTER_REDEEM_CODES.push(clean);
-                        }
-                    });
-                }
-
-                renderRemoteAnnouncement(cfg.announcement);
-
-                if (compareVersions(cfg.latest_version, APP_VERSION)) {
-                    showUpdateModal(cfg);
-                }
-            } catch (_) {}
-        }
-    </script>
-</body>
-</html>
+                
