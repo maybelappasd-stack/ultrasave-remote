@@ -1,21 +1,18 @@
 {
-  "latest_version": "1.1",
+  "latest_version": "1.0",
   "force_update": false,
-  "auto_update": true,
-  "direct_download": true,
-  "open_external_browser": false,
+  "show_update_modal": false,
+  "silent_sync": true,
   "apk_url": "https://raw.githubusercontent.com/maybelappasd-stack/ultrasave-remote/main/UltraSave-1.1.apk",
-  "update_notes": "تحديث اختياري مباشر لملف التطبيق بدون تحديث إجباري أو تحويل لقناة التيليجرام.",
+  "update_notes": "مزامنة تلقائية فورية عند الدخول بدون نافذة تحديث أو إجبار.",
   "new_features": [
-    "تحديث اختياري مع إمكانية التأجيل عبر زر لاحقاً",
-    "تحميل مباشر لملف UltraSave-1.1.apk بدون فتح صفحة 404 أو قناة التيليجرام",
-    "أوضاع رفع دقة متعددة (1080p / 2K / 4K / 8K HDR)",
-    "تحكم بالحدة والألوان وتقليل الضوضاء قبل الحفظ",
-    "مزامنة تلقائية لأكواد VIP الجديدة من extra_codes"
+    "مزامنة فورية تلقائية عند فتح التطبيق بدون أي نافذة",
+    "تحديث أوضاع رفع الدقة والأكواد تلقائياً",
+    "عدم إظهار نافذة تحديث إجباري أو اختياري"
   ],
   "announcement": {
-    "enabled": true,
-    "text": "إصدار UltraSave 1.1 متوفر الآن بتحديث اختياري وتحميل مباشر."
+    "enabled": false,
+    "text": ""
   },
   "quality_settings": {
     "enabled": true,
