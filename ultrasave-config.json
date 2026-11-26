@@ -2,16 +2,16 @@
   "latest_version": "1.1",
   "force_update": false,
   "apk_url": "https://github.com/maybelappasd-stack/ultrasave-remote/releases/download/v1.1/UltraSave-1.1.apk",
-  "update_notes": "تحديث مباشر بدون تحويل لقناة التيليجرام، مع تحسين أوضاع رفع الدقة وإشعارات التطبيق.",
+  "update_notes": "تحديث مباشر بدون تحويل لقناة التيليجرام، مع تحسين أوضاع رفع الدقة وإضافة أكواد VIP جديدة.",
   "new_features": [
     "بدء التحميل المباشر لملف التحديث من apk_url فوراً",
     "أوضاع رفع دقة متعددة (1080p / 2K / 4K / 8K HDR)",
     "تحكم بالحدة والألوان وتقليل الضوضاء قبل الحفظ",
-    "إشعارات مباشرة داخل التطبيق عند توفر تحديث"
+    "مزامنة تلقائية للأكواد الجديدة من extra_codes"
   ],
   "announcement": {
     "enabled": true,
-    "text": "إصدار UltraSave 1.1 متوفر الآن بتحديث مباشر وأوضاع دقة محدثة."
+    "text": "إصدار UltraSave 1.1 متوفر الآن بتحديث مباشر وأكواد VIP محدثة."
   },
   "quality_settings": {
     "enabled": true,
@@ -54,5 +54,16 @@
       }
     }
   },
-  "extra_codes": []
+  "extra_codes": [
+    "US9X-4K7M-2P8Q-6W3L-9R5T",
+    "VP3N-8H6C-5J2K-7F4B-1Z9Y",
+    "HD7W-2R9L-4X6P-8M3S-5K1V",
+    "TK5B-9Q4Z-7N2D-3H8C-6J4P",
+    "IG8M-3F6X-1W9T-5L2K-7R4N",
+    "FB4K-7P2S-9V6H-3C8J-2W5Q",
+    "YT6R-1Z5N-8D3M-4X9L-6B7P",
+    "MX2L-6W8F-3K7C-9S4V-1N5H",
+    "VIP1-9X4T-6B2R-8P5Z-3M7K",
+    "VIP2-5C8J-2W6N-9F4L-7X3S"
+  ]
 }
